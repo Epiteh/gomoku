@@ -1,0 +1,6 @@
+*.o
+pbrain-gomoku-ai
+.vscode
+client
+*tilu
+html
