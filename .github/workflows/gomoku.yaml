@@ -31,7 +31,7 @@ jobs:
         run: |
           IFS=','
           for mot in $EXECUTABLES; do
-            if [[ ! -x $mot ]] then
+            if [[ ! -x $mot ]]; then
                 exit 1
             fi
           done
@@ -50,7 +50,9 @@ jobs:
 
   generate_doc:
     if: github.ref == 'refs/heads/main'
-    needs: check_program_compilation
+    needs:
+      - check_program_compilation
+      - run_tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
