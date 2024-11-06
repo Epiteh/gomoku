@@ -54,12 +54,25 @@ unsigned int Game::getSize() const
     return this->_size;
 }
 
+br_move_t Game::handleObviousMove()
+{
+    br_move_t move = {-1, -1};
+
+    // TODO: Implement the logic
+
+    return move;
+}
+
 br_move_t Game::playMove()
 {
-    br_move_t move;
+    br_move_t move = {0, 0};
+    br_move_t ob_move = handleObviousMove();
 
-    move.x = 0; // TODO: Implement the logic
-    move.y = 0; // TODO: Implement the logic
+    if (ob_move.x > -1) {
+        return ob_move;
+    }
+
+    // TODO: Implement the logic
 
     return move;
 }

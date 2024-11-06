@@ -30,6 +30,8 @@ public:
 
   br_move_t playMove();
 
+  br_move_t handleObviousMove();
+
   int *getBoard();
 
   void clearBoard();
