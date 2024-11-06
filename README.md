@@ -30,7 +30,7 @@ cd B-AIA-500-NAN-5-1-gomoku-thomas.rochefeuille
 
 2. Build the project:
 ```bash
-    make -j 5
+make -j 5
 ```
 
 ## Usage
@@ -43,7 +43,7 @@ To launch the client, run:
 ### Running the Tests:
 To execute the test suite:
 ```bash
-    make tests_run
+make tests_run
 ```
 
 ## Documentation
