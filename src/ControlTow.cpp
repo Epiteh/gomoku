@@ -108,9 +108,10 @@ void ControlTow::handle_board(std::string &cmd)
     unsigned int x;
     unsigned int y;
 
+    (void) cmd;
     try {
         this->_game.clearBoard();
-        for (line; std::getline(std::cin, line);) {
+        for (; std::getline(std::cin, line);) {
             if (line == "DONE") {
                 break;
             }
