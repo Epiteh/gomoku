@@ -85,7 +85,7 @@ void ControlTow::handle_turn(std::string &cmd)
         int *board = this->_game.getBoard();
         board[x * size + y] = 2;
 
-        if ((x < 0 || x > size) || (y < 0 || y > size)) {
+        if ((x > size) || (y > size)) {
             throw std::invalid_argument("invalid position");
         }
         br_move_t move = this->_game.playMove();
@@ -127,7 +127,7 @@ void ControlTow::handle_board(std::string &cmd)
             }
             x = std::stoul(params[0]);
             y = std::stoul(params[1]);
-            if (x < 0 || x >= size || y < 0 || y >= size) {
+            if (x >= size || y >= size) {
                 throw std::invalid_argument("invalid position");
                 return;
             }

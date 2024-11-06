@@ -29,12 +29,12 @@ struct CommandMapping {
     std::function<void(std::string&)> handler;
 };
 
-enum log_type : std::uint8_t
+enum log_type
 {
     UNKNOWN,
     ERROR,
     MESSAGE,
-    DEBUG,
+    DEBUG
 };
 
 const std::unordered_map<
