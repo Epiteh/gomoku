@@ -13,6 +13,8 @@ nbc signature powered by love.
 
 */
 
+#include <time.h>
+#include <stdlib.h>
 #include "ControlTow.hpp"
 #include <memory>
 #include "Game.hpp"
@@ -20,10 +22,10 @@ nbc signature powered by love.
 auto main() -> int
 {
     Game game;
-
     std::shared_ptr<ControlTow> ct =
         std::make_shared<ControlTow>(game);
 
+    srand(time(NULL));
     for (
         std::string line;
         !ct->get_should_stop()

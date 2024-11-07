@@ -14,6 +14,7 @@ nbc signature powered by love.
 */
 
 #include "Game.hpp"
+#include <stdlib.h>
 
 Game::Game() {
     this->_board = nullptr;
@@ -38,6 +39,9 @@ void Game::clearBoard()
         delete[] this->_board;
     }
     this->_board = new int[this->_size * this->_size];
+    for (unsigned int i = 0; i < this->_size * this->_size; i++) {
+        this->_board[i] = 0;
+    }
 }
 
 void Game::setSize(unsigned int size)
@@ -47,6 +51,9 @@ void Game::setSize(unsigned int size)
         delete[] this->_board;
     }
     this->_board = new int[size * size];
+    for (unsigned int i = 0; i < size * size; i++) {
+        this->_board[i] = 0;
+    }
 }
 
 unsigned int Game::getSize() const
@@ -54,12 +61,128 @@ unsigned int Game::getSize() const
     return this->_size;
 }
 
+br_move_t Game::_getMoveFromPosition(unsigned int x, unsigned int y)
+{
+    br_move_t vh_move = {-1, -1};
+    br_move_t vb_move = {-1, -1};
+
+    br_move_t hr_move = {-1, -1};
+    br_move_t hl_move = {-1, -1};
+
+    br_move_t ldr_move = {-1, -1};
+    br_move_t ldl_move = {-1, -1};
+
+    br_move_t rdr_move = {-1, -1};
+    br_move_t rdl_move = {-1, -1};
+
+    unsigned int vh_counter = 1;
+    unsigned int vb_counter = 1;
+
+    unsigned int hr_counter = 1;
+    unsigned int hl_counter = 1;
+
+    unsigned int leftr_diag_counter = 1;
+    unsigned int leftl_diag_counter = 1;
+
+    unsigned int rightr_diag_counter = 1;
+    unsigned int rightl_diag_counter = 1;
+
+
+    for (unsigned int i = 0; i < 4; i++) {
+        if (x - i > 0) {
+            if (this->_board[y * this->_size + x - i] == 1) {
+                hl_counter ++;
+            } else if (this->_board[y * this->_size + x - i] == 0) {
+                hl_move = {(int) (x - i), (int) y};
+            }
+        }
+        if (x + i < this->_size) {
+            if (this->_board[y * this->_size + x + i] == 1) {
+                hr_counter ++;
+            } else if (this->_board[y * this->_size + x + i] == 0) {
+                hr_move = {(int) (x + i), (int) y};
+            }
+        }
+        if (y - i > 0) {
+            if (this->_board[(y - i) * this->_size + x] == 1) {
+                vb_counter ++;
+            } else if (this->_board[(y - i) * this->_size + x] == 0) {
+                vb_move = {(int) x, (int) (y - i)};
+            }
+        }
+        if (y + i < this->_size) {
+            if (this->_board[(y + i) * this->_size + x] == 1) {
+                vh_counter ++;
+            } else if (this->_board[(y + i) * this->_size + x] == 0) {
+                vh_move = {(int) x, (int) (y + i)};
+            }
+        }
+        if (x - i > 0 && y - i > 0) {
+            if (this->_board[(y - i) * this->_size + x - i] == 1) {
+                leftl_diag_counter ++;
+            } else if (this->_board[(y - i) * this->_size + x - i] == 0) {
+                ldl_move = {(int) (x - i), (int) (y - i)};
+            }
+        }
+        if (x + i < this->_size && y + i < this->_size) {
+            if (this->_board[(y + i) * this->_size + x + i] == 1) {
+                rightr_diag_counter ++;
+            } else if (this->_board[(y + i) * this->_size + x + i] == 0) {
+                rdr_move = {(int) (x + i), (int) (y + i)};
+            }
+        }
+        if (x - i > 0 && y + i < this->_size) {
+            if (this->_board[(y + i) * this->_size + x - i] == 1) {
+                leftr_diag_counter ++;
+            } else if (this->_board[(y + i) * this->_size + x - i] == 0) {
+                rdl_move = {(int) (x - i), (int) (y + i)};
+            }
+        }
+        if (x + i < this->_size && y - i > 0) {
+            if (this->_board[(y - i) * this->_size + x + i] == 1) {
+                rightl_diag_counter ++;
+            } else if (this->_board[(y - i) * this->_size + x + i] == 0) {
+                ldr_move = {(int) (x + i), (int) (y - i)};
+            }
+        }
+    }
+
+    if (vh_counter >= 4) {
+        return vh_move;
+    } else if (vb_counter >= 4) {
+        return vb_move;
+    } else if (hr_counter >= 4) {
+        return hr_move;
+    } else if (hl_counter >= 4) {
+        return hl_move;
+    } else if (leftr_diag_counter >= 4) {
+        return ldl_move;
+    } else if (leftl_diag_counter >= 4) {
+        return ldr_move;
+    } else if (rightr_diag_counter >= 4) {
+        return rdr_move;
+    } else if (rightl_diag_counter >= 4) {
+        return rdl_move;
+    } else {
+        return {-1, -1};
+    }
+}
+
 br_move_t Game::handleObviousMove()
 {
     br_move_t move = {-1, -1};
+    unsigned int size = this->_size;
 
-    // TODO: Implement the logic
-
+    for (unsigned int y = 0; y < size; y++) {
+        for (unsigned int x = 0; x < size; x++) {
+            if (this->_board[y * this->_size + x] == 1) {
+                move = this->_getMoveFromPosition(y, x);
+                if (move.x > -1) {
+                    return move;
+                }
+            }
+        }
+    }
     return move;
 }
 
@@ -72,7 +195,12 @@ br_move_t Game::playMove()
         return ob_move;
     }
 
-    // TODO: Implement the logic
+    move.x = rand() % this->_size;
+    move.y = rand() % this->_size;
 
+    while (this->_board[move.y * this->_size + move.x] != 0) {
+        move.x = rand() % this->_size;
+        move.y = rand() % this->_size;
+    }
     return move;
 }
