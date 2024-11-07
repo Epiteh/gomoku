@@ -88,7 +88,7 @@ br_move_t Game::_getMoveFromPosition(unsigned int x, unsigned int y)
     unsigned int rightl_diag_counter = 1;
 
 
-    for (unsigned int i = 0; i < 4; i++) {
+    for (unsigned int i = 1; i < 5; i++) {
         if (x - i > 0) {
             if (this->_board[y * this->_size + x - i] == 1) {
                 hl_counter ++;
