@@ -36,7 +36,10 @@ public:
 
   void clearBoard();
 
+
 private:
+    br_move_t _getMoveFromPosition(unsigned int x, unsigned int y);
+
     unsigned int _size;
     int *_board;
 };
