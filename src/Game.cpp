@@ -94,56 +94,56 @@ br_move_t Game::_getMoveFromPosition(int x, int y)
             if (this->_board[y * size + x - i] == 1) {
                 hl_counter ++;
             } else if (this->_board[y * size + x - i] == 0) {
-                hl_move = {(int) (x - i), (int) y};
+                hl_move = {(x - i), y};
             }
         }
         if (x + i < size) {
             if (this->_board[y * size + x + i] == 1) {
                 hr_counter ++;
             } else if (this->_board[y * size + x + i] == 0) {
-                hr_move = {(int) (x + i), (int) y};
+                hr_move = {(x + i), y};
             }
         }
         if (y - i > 0) {
             if (this->_board[(y - i) * size + x] == 1) {
                 vb_counter ++;
             } else if (this->_board[(y - i) * size + x] == 0) {
-                vb_move = {(int) x, (int) (y - i)};
+                vb_move = {x, (y - i)};
             }
         }
         if (y + i < size) {
             if (this->_board[(y + i) * size + x] == 1) {
                 vh_counter ++;
             } else if (this->_board[(y + i) * size + x] == 0) {
-                vh_move = {(int) x, (int) (y + i)};
+                vh_move = {x, (y + i)};
             }
         }
         if (x - i > 0 && y - i > 0) {
             if (this->_board[(y - i) * size + x - i] == 1) {
                 leftl_diag_counter ++;
             } else if (this->_board[(y - i) * size + x - i] == 0) {
-                ldl_move = {(int) (x - i), (int) (y - i)};
+                ldl_move = {(x - i), (y - i)};
             }
         }
         if (x + i < size && y + i < size) {
             if (this->_board[(y + i) * size + x + i] == 1) {
                 rightr_diag_counter ++;
             } else if (this->_board[(y + i) * size + x + i] == 0) {
-                rdr_move = {(int) (x + i), (int) (y + i)};
+                rdr_move = {(x + i), (y + i)};
             }
         }
         if (x - i > 0 && y + i < size) {
             if (this->_board[(y + i) * size + x - i] == 1) {
                 leftr_diag_counter ++;
             } else if (this->_board[(y + i) * size + x - i] == 0) {
-                rdl_move = {(int) (x - i), (int) (y + i)};
+                rdl_move = {(x - i), (y + i)};
             }
         }
         if (x + i < size && y - i > 0) {
             if (this->_board[(y - i) * size + x + i] == 1) {
                 rightl_diag_counter ++;
             } else if (this->_board[(y - i) * size + x + i] == 0) {
-                ldr_move = {(int) (x + i), (int) (y - i)};
+                ldr_move = {(x + i), (y - i)};
             }
         }
     }
