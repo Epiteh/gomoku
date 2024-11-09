@@ -61,7 +61,7 @@ unsigned int Game::getSize() const
     return this->_size;
 }
 
-br_move_t Game::_getObviousMove(int x, int y, int tileValue)
+br_move_t Game::_getVictoryMove(int x, int y, int playerType)
 {
     br_move_t vh_move = {-1, -1};
     br_move_t vb_move = {-1, -1};
@@ -83,56 +83,56 @@ br_move_t Game::_getObviousMove(int x, int y, int tileValue)
 
     for (int i = 1; i < 5; i++) {
         if (x - i > 0) {
-            if (this->_board[y * size + x - i] == tileValue) {
+            if (this->_board[y * size + x - i] == playerType) {
                 hl_counter ++;
             } else if (this->_board[y * size + x - i] == 0) {
                 hl_move = {(x - i), y};
             }
         }
         if (x + i < size) {
-            if (this->_board[y * size + x + i] == tileValue) {
+            if (this->_board[y * size + x + i] == playerType) {
                 hr_counter ++;
             } else if (this->_board[y * size + x + i] == 0) {
                 hr_move = {(x + i), y};
             }
         }
         if (y - i > 0) {
-            if (this->_board[(y - i) * size + x] == tileValue) {
+            if (this->_board[(y - i) * size + x] == playerType) {
                 vb_counter ++;
             } else if (this->_board[(y - i) * size + x] == 0) {
                 vb_move = {x, (y - i)};
             }
         }
         if (y + i < size) {
-            if (this->_board[(y + i) * size + x] == tileValue) {
+            if (this->_board[(y + i) * size + x] == playerType) {
                 vh_counter ++;
             } else if (this->_board[(y + i) * size + x] == 0) {
                 vh_move = {x, (y + i)};
             }
         }
         if (x - i > 0 && y - i > 0) {
-            if (this->_board[(y - i) * size + x - i] == tileValue) {
+            if (this->_board[(y - i) * size + x - i] == playerType) {
                 leftl_diag_counter ++;
             } else if (this->_board[(y - i) * size + x - i] == 0) {
                 ldl_move = {(x - i), (y - i)};
             }
         }
         if (x + i < size && y + i < size) {
-            if (this->_board[(y + i) * size + x + i] == tileValue) {
+            if (this->_board[(y + i) * size + x + i] == playerType) {
                 rightr_diag_counter ++;
             } else if (this->_board[(y + i) * size + x + i] == 0) {
                 rdr_move = {(x + i), (y + i)};
             }
         }
         if (x - i > 0 && y + i < size) {
-            if (this->_board[(y + i) * size + x - i] == tileValue) {
+            if (this->_board[(y + i) * size + x - i] == playerType) {
                 leftr_diag_counter ++;
             } else if (this->_board[(y + i) * size + x - i] == 0) {
                 rdl_move = {(x - i), (y + i)};
             }
         }
         if (x + i < size && y - i > 0) {
-            if (this->_board[(y - i) * size + x + i] == tileValue) {
+            if (this->_board[(y - i) * size + x + i] == playerType) {
                 rightl_diag_counter ++;
             } else if (this->_board[(y - i) * size + x + i] == 0) {
                 ldr_move = {(x + i), (y - i)};
@@ -161,7 +161,7 @@ br_move_t Game::_getObviousMove(int x, int y, int tileValue)
     }
 }
 
-br_move_t Game::handleObviousMove()
+br_move_t Game::_victoryMove()
 {
     br_move_t move = {-1, -1};
     int size = (int)(this->_size);
@@ -171,7 +171,7 @@ br_move_t Game::handleObviousMove()
         for (int x = 0; x < size; x++) {
             tile = this->_board[y * size + x];
             if (tile == 1) {
-                move = this->_getObviousMove(x, y, tile);
+                move = this->_getVictoryMove(x, y, tile);
                 if (move.x > -1) {
                     return move;
                 }
@@ -182,7 +182,7 @@ br_move_t Game::handleObviousMove()
         for (int x = 0; x < size; x++) {
             tile = this->_board[y * size + x];
             if (tile == 2) {
-                move = this->_getObviousMove(x, y, tile);
+                move = this->_getVictoryMove(x, y, tile);
                 if (move.x > -1) {
                     return move;
                 }
@@ -195,7 +195,7 @@ br_move_t Game::handleObviousMove()
 br_move_t Game::playMove()
 {
     br_move_t move = {0, 0};
-    br_move_t ob_move = handleObviousMove();
+    br_move_t ob_move = this->_victoryMove();
 
     if (ob_move.x > -1) {
         return ob_move;
