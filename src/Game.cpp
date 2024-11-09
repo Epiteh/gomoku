@@ -170,7 +170,18 @@ br_move_t Game::handleObviousMove()
     for (int y = 0; y < size; y++) {
         for (int x = 0; x < size; x++) {
             tile = this->_board[y * size + x];
-            if (tile == 1 || tile == 2) {
+            if (tile == 1) {
+                move = this->_getObviousMove(x, y, tile);
+                if (move.x > -1) {
+                    return move;
+                }
+            }
+        }
+    }
+    for (int y = 0; y < size; y++) {
+        for (int x = 0; x < size; x++) {
+            tile = this->_board[y * size + x];
+            if (tile == 2) {
                 move = this->_getObviousMove(x, y, tile);
                 if (move.x > -1) {
                     return move;
