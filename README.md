@@ -24,7 +24,7 @@ This project focus on the AI algoritm (Min-Max, Monte-Carlo or derived) and its 
 
 1. Clone the repository:
 ```bash
-git git@github.com:EpitechPromo2027/B-AIA-500-NAN-5-1-gomoku-thomas.rochefeuille.git
+git clone git@github.com:EpitechPromo2027/B-AIA-500-NAN-5-1-gomoku-thomas.rochefeuille.git
 cd B-AIA-500-NAN-5-1-gomoku-thomas.rochefeuille
 ```
 
