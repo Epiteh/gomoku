@@ -175,8 +175,8 @@ br_move_t Game::handleObviousMove()
 
     for (unsigned int y = 0; y < size; y++) {
         for (unsigned int x = 0; x < size; x++) {
-            if (this->_board[y * this->_size + x] == 1) {
-                move = this->_getMoveFromPosition(y, x);
+            if (this->_board[y * size + x] == 1) {
+                move = this->_getMoveFromPosition(x, y);
                 if (move.x > -1) {
                     return move;
                 }
