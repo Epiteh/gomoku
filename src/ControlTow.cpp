@@ -132,7 +132,7 @@ void ControlTow::handle_board(std::string &cmd)
                 throw std::invalid_argument("invalid position");
                 return;
             }
-            board[x * size + y] = value;
+            board[y * size + x] = value;
         }
     } catch (std::invalid_argument const& ex) {
         std::cout << "ERROR " << ex.what() << "\r" << std::endl;
