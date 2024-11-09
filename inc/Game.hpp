@@ -38,7 +38,7 @@ public:
 
 
 private:
-    br_move_t _getMoveFromPosition(int x, int y);
+    br_move_t _getObviousMove(int x, int y, int tileValue);
 
     unsigned int _size;
     int *_board;

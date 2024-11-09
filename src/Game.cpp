@@ -61,86 +61,78 @@ unsigned int Game::getSize() const
     return this->_size;
 }
 
-br_move_t Game::_getMoveFromPosition(int x, int y)
+br_move_t Game::_getObviousMove(int x, int y, int tileValue)
 {
     br_move_t vh_move = {-1, -1};
     br_move_t vb_move = {-1, -1};
-
     br_move_t hr_move = {-1, -1};
     br_move_t hl_move = {-1, -1};
-
     br_move_t ldr_move = {-1, -1};
     br_move_t ldl_move = {-1, -1};
-
     br_move_t rdr_move = {-1, -1};
     br_move_t rdl_move = {-1, -1};
-
     unsigned int vh_counter = 1;
     unsigned int vb_counter = 1;
-
     unsigned int hr_counter = 1;
     unsigned int hl_counter = 1;
-
     unsigned int leftr_diag_counter = 1;
     unsigned int leftl_diag_counter = 1;
-
     unsigned int rightr_diag_counter = 1;
     unsigned int rightl_diag_counter = 1;
-
     int size = (int)(this->_size);
 
     for (int i = 1; i < 5; i++) {
         if (x - i > 0) {
-            if (this->_board[y * size + x - i] == 1) {
+            if (this->_board[y * size + x - i] == tileValue) {
                 hl_counter ++;
             } else if (this->_board[y * size + x - i] == 0) {
                 hl_move = {(x - i), y};
             }
         }
         if (x + i < size) {
-            if (this->_board[y * size + x + i] == 1) {
+            if (this->_board[y * size + x + i] == tileValue) {
                 hr_counter ++;
             } else if (this->_board[y * size + x + i] == 0) {
                 hr_move = {(x + i), y};
             }
         }
         if (y - i > 0) {
-            if (this->_board[(y - i) * size + x] == 1) {
+            if (this->_board[(y - i) * size + x] == tileValue) {
                 vb_counter ++;
             } else if (this->_board[(y - i) * size + x] == 0) {
                 vb_move = {x, (y - i)};
             }
         }
         if (y + i < size) {
-            if (this->_board[(y + i) * size + x] == 1) {
+            if (this->_board[(y + i) * size + x] == tileValue) {
                 vh_counter ++;
             } else if (this->_board[(y + i) * size + x] == 0) {
                 vh_move = {x, (y + i)};
             }
         }
         if (x - i > 0 && y - i > 0) {
-            if (this->_board[(y - i) * size + x - i] == 1) {
+            if (this->_board[(y - i) * size + x - i] == tileValue) {
                 leftl_diag_counter ++;
             } else if (this->_board[(y - i) * size + x - i] == 0) {
                 ldl_move = {(x - i), (y - i)};
             }
         }
         if (x + i < size && y + i < size) {
-            if (this->_board[(y + i) * size + x + i] == 1) {
+            if (this->_board[(y + i) * size + x + i] == tileValue) {
                 rightr_diag_counter ++;
             } else if (this->_board[(y + i) * size + x + i] == 0) {
                 rdr_move = {(x + i), (y + i)};
             }
         }
         if (x - i > 0 && y + i < size) {
-            if (this->_board[(y + i) * size + x - i] == 1) {
+            if (this->_board[(y + i) * size + x - i] == tileValue) {
                 leftr_diag_counter ++;
             } else if (this->_board[(y + i) * size + x - i] == 0) {
                 rdl_move = {(x - i), (y + i)};
             }
         }
         if (x + i < size && y - i > 0) {
-            if (this->_board[(y - i) * size + x + i] == 1) {
+            if (this->_board[(y - i) * size + x + i] == tileValue) {
                 rightl_diag_counter ++;
             } else if (this->_board[(y - i) * size + x + i] == 0) {
                 ldr_move = {(x + i), (y - i)};
@@ -173,11 +165,13 @@ br_move_t Game::handleObviousMove()
 {
     br_move_t move = {-1, -1};
     int size = (int)(this->_size);
+    int tile;
 
     for (int y = 0; y < size; y++) {
         for (int x = 0; x < size; x++) {
-            if (this->_board[y * size + x] == 1) {
-                move = this->_getMoveFromPosition(x, y);
+            tile = this->_board[y * size + x];
+            if (tile == 1 || tile == 2) {
+                move = this->_getObviousMove(x, y, tile);
                 if (move.x > -1) {
                     return move;
                 }
