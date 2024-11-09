@@ -61,7 +61,7 @@ unsigned int Game::getSize() const
     return this->_size;
 }
 
-br_move_t Game::_getMoveFromPosition(unsigned int x, unsigned int y)
+br_move_t Game::_getMoveFromPosition(int x, int y)
 {
     br_move_t vh_move = {-1, -1};
     br_move_t vb_move = {-1, -1};
@@ -87,61 +87,62 @@ br_move_t Game::_getMoveFromPosition(unsigned int x, unsigned int y)
     unsigned int rightr_diag_counter = 1;
     unsigned int rightl_diag_counter = 1;
 
+    int size = (int)(this->_size);
 
-    for (unsigned int i = 1; i < 5; i++) {
+    for (int i = 1; i < 5; i++) {
         if (x - i > 0) {
-            if (this->_board[y * this->_size + x - i] == 1) {
+            if (this->_board[y * size + x - i] == 1) {
                 hl_counter ++;
-            } else if (this->_board[y * this->_size + x - i] == 0) {
+            } else if (this->_board[y * size + x - i] == 0) {
                 hl_move = {(int) (x - i), (int) y};
             }
         }
-        if (x + i < this->_size) {
-            if (this->_board[y * this->_size + x + i] == 1) {
+        if (x + i < size) {
+            if (this->_board[y * size + x + i] == 1) {
                 hr_counter ++;
-            } else if (this->_board[y * this->_size + x + i] == 0) {
+            } else if (this->_board[y * size + x + i] == 0) {
                 hr_move = {(int) (x + i), (int) y};
             }
         }
         if (y - i > 0) {
-            if (this->_board[(y - i) * this->_size + x] == 1) {
+            if (this->_board[(y - i) * size + x] == 1) {
                 vb_counter ++;
-            } else if (this->_board[(y - i) * this->_size + x] == 0) {
+            } else if (this->_board[(y - i) * size + x] == 0) {
                 vb_move = {(int) x, (int) (y - i)};
             }
         }
-        if (y + i < this->_size) {
-            if (this->_board[(y + i) * this->_size + x] == 1) {
+        if (y + i < size) {
+            if (this->_board[(y + i) * size + x] == 1) {
                 vh_counter ++;
-            } else if (this->_board[(y + i) * this->_size + x] == 0) {
+            } else if (this->_board[(y + i) * size + x] == 0) {
                 vh_move = {(int) x, (int) (y + i)};
             }
         }
         if (x - i > 0 && y - i > 0) {
-            if (this->_board[(y - i) * this->_size + x - i] == 1) {
+            if (this->_board[(y - i) * size + x - i] == 1) {
                 leftl_diag_counter ++;
-            } else if (this->_board[(y - i) * this->_size + x - i] == 0) {
+            } else if (this->_board[(y - i) * size + x - i] == 0) {
                 ldl_move = {(int) (x - i), (int) (y - i)};
             }
         }
-        if (x + i < this->_size && y + i < this->_size) {
-            if (this->_board[(y + i) * this->_size + x + i] == 1) {
+        if (x + i < size && y + i < size) {
+            if (this->_board[(y + i) * size + x + i] == 1) {
                 rightr_diag_counter ++;
-            } else if (this->_board[(y + i) * this->_size + x + i] == 0) {
+            } else if (this->_board[(y + i) * size + x + i] == 0) {
                 rdr_move = {(int) (x + i), (int) (y + i)};
             }
         }
-        if (x - i > 0 && y + i < this->_size) {
-            if (this->_board[(y + i) * this->_size + x - i] == 1) {
+        if (x - i > 0 && y + i < size) {
+            if (this->_board[(y + i) * size + x - i] == 1) {
                 leftr_diag_counter ++;
-            } else if (this->_board[(y + i) * this->_size + x - i] == 0) {
+            } else if (this->_board[(y + i) * size + x - i] == 0) {
                 rdl_move = {(int) (x - i), (int) (y + i)};
             }
         }
-        if (x + i < this->_size && y - i > 0) {
-            if (this->_board[(y - i) * this->_size + x + i] == 1) {
+        if (x + i < size && y - i > 0) {
+            if (this->_board[(y - i) * size + x + i] == 1) {
                 rightl_diag_counter ++;
-            } else if (this->_board[(y - i) * this->_size + x + i] == 0) {
+            } else if (this->_board[(y - i) * size + x + i] == 0) {
                 ldr_move = {(int) (x + i), (int) (y - i)};
             }
         }
@@ -171,10 +172,10 @@ br_move_t Game::_getMoveFromPosition(unsigned int x, unsigned int y)
 br_move_t Game::handleObviousMove()
 {
     br_move_t move = {-1, -1};
-    unsigned int size = this->_size;
+    int size = (int)(this->_size);
 
-    for (unsigned int y = 0; y < size; y++) {
-        for (unsigned int x = 0; x < size; x++) {
+    for (int y = 0; y < size; y++) {
+        for (int x = 0; x < size; x++) {
             if (this->_board[y * size + x] == 1) {
                 move = this->_getMoveFromPosition(x, y);
                 if (move.x > -1) {

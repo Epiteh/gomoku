@@ -38,7 +38,7 @@ public:
 
 
 private:
-    br_move_t _getMoveFromPosition(unsigned int x, unsigned int y);
+    br_move_t _getMoveFromPosition(int x, int y);
 
     unsigned int _size;
     int *_board;
