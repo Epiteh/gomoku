@@ -115,7 +115,7 @@ auto Minimax::alpha_beta(
     }
 
     if (is_max) {
-        int max_eval = -10000;
+        int max = -10000;
 
         for (int i = 0; i < board_size; i++) {
             if (board[i] == VOID) {
@@ -127,16 +127,16 @@ auto Minimax::alpha_beta(
                 );
 
                 board[i] = VOID;
-                max_eval = std::max(max_eval, eval);
+                max = std::max(max, eval);
                 alpha = std::max(alpha, eval);
                 if (beta <= alpha) {
                     break;
                 }
             }
         }
-        return (max_eval);
+        return (max);
     } else {
-        int min_eval = 10000;
+        int min = 10000;
 
         for (int i = 0; i < board_size; i++) {
             if (board[i] == VOID) {
@@ -148,13 +148,13 @@ auto Minimax::alpha_beta(
                 );
 
                 board[i] = VOID;
-                min_eval = std::min(min_eval, eval);
+                min = std::min(min, eval);
                 beta = std::min(beta, eval);
                 if (beta <= alpha) {
                     break;
                 }
             }
         }
-        return (min_eval);
+        return (min);
     }
 }
