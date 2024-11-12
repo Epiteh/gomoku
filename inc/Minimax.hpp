@@ -20,13 +20,15 @@ nbc signature powered by love.
 class Minimax
 {
 public:
+    const int VOID = 0;
+    const int MAX_PLAYER = 1;
+    const int MIN_PLAYER = -1;
+
     Minimax(Game &game);
     ~Minimax() = default;
 
     auto run(int *board, int depth, bool is_max) -> bool;
-
     auto get_best_move(int *board) -> int;
-    auto get_best_score(int *board) -> int;
 
     auto alpha_beta(
         int *board,
@@ -37,8 +39,10 @@ public:
     ) -> int;
 
 private:
-    int m_curTime;
-    int best_v;
+    auto _evaluate(int *board) -> int;
+
+    int _curTime;
+    int _best_v;
 
     Game &_game;
 };
