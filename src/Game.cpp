@@ -204,7 +204,7 @@ br_move_t Game::playMove()
     move.x = rand() % this->_size;
     move.y = rand() % this->_size;
 
-    while (this->_board[move.y * this->_size + move.x] != 0) {
+    while (this->_board[move.y * this->_size + move.x] == 0) {
         move.x = rand() % this->_size;
         move.y = rand() % this->_size;
     }
