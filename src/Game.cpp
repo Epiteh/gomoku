@@ -14,6 +14,7 @@ nbc signature powered by love.
 */
 
 #include "Game.hpp"
+#include "Minimax.hpp"
 #include <stdlib.h>
 
 Game::Game() {
@@ -194,6 +195,8 @@ br_move_t Game::_victoryMove()
 
 br_move_t Game::playMove()
 {
+    Minimax minimax(this->_board, this->_size);
+    std::pair<int, int> best_move;
     br_move_t move = {0, 0};
     br_move_t ob_move = this->_victoryMove();
 
@@ -201,12 +204,16 @@ br_move_t Game::playMove()
         return ob_move;
     }
 
-    move.x = rand() % this->_size;
-    move.y = rand() % this->_size;
+    best_move = minimax.get_best_move(this->_board);
+    move.x = best_move.first;
+    move.y = best_move.second;
 
-    while (this->_board[move.y * this->_size + move.x] == 0) {
-        move.x = rand() % this->_size;
-        move.y = rand() % this->_size;
-    }
+    // move.x = rand() % this->_size;
+    // move.y = rand() % this->_size;
+
+    // while (this->_board[move.y * this->_size + move.x] == 0) {
+    //     move.x = rand() % this->_size;
+    //     move.y = rand() % this->_size;
+    // }
     return move;
 }
