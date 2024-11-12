@@ -40,7 +40,7 @@ auto Minimax::run(int *board, int depth, bool is_max) -> bool
                 if (depth == 0) {
                     _best_v = std::max(_best_v, _evaluate(board));
                 } else {
-                    run(board, depth - 1, !is_max);
+                    run(board, (depth - 1), !is_max);
                 }
                 _game.getBoard()[y * size + x] = Minimax::VOID;
             }
