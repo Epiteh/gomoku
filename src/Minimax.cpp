@@ -28,31 +28,6 @@ Minimax::Minimax(int *board, unsigned int size)
     this->_best_v = 0;
 }
 
-auto Minimax::run(int *board, int depth, bool is_max) -> bool
-{
-    int size = (int)(this->_size);
-    int tile = 0;
-
-    for (int y = 0; y < size; y++) {
-        for (int x = 0; x < size; x++) {
-            tile = this->_board[y * size + x];
-
-            if (tile = Minimax::VOID) {
-                this->_board[y * size + x] = is_max
-                    ? Minimax::MAX_PLAYER
-                    : Minimax::MIN_PLAYER;
-                if (depth == 0) {
-                    _best_v = std::max(_best_v, _evaluate(board));
-                } else {
-                    run(board, (depth - 1), !is_max);
-                }
-                this->_board[y * size + x] = Minimax::VOID;
-            }
-        }
-    }
-    return (true);
-}
-
 auto Minimax::get_best_move(int *board) -> br_move_t
 {
     int size = (int)(this->_size);
