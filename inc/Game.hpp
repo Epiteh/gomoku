@@ -49,19 +49,17 @@ public:
   /// @brief Clear the board
   void clearBoard();
 
+  /// @brief Handle the victory move (from player 1 or player 2)
+  /// @return The move to play
+  br_move_t victoryMove();
 
 private:
-
-    /// @brief Handle the victory move (from player 1 or player 2)
-    /// @return The move to play
-    br_move_t _victoryMove();
-
-    /// @brief Get the victory move
-    /// @param x The x position
-    /// @param y The y position
-    /// @param playerType The player type
-    /// @return The move to play
-    br_move_t _getVictoryMove(int x, int y, int playerType);
+  /// @brief Get the victory move
+  /// @param x The x position
+  /// @param y The y position
+  /// @param playerType The player type
+  /// @return The move to play
+  br_move_t _getVictoryMove(int x, int y, int playerType);
 
     unsigned int _size;
     int *_board;

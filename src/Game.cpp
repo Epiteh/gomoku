@@ -64,105 +64,80 @@ unsigned int Game::getSize() const
 
 br_move_t Game::_getVictoryMove(int x, int y, int playerType)
 {
-    br_move_t vh_move = {-1, -1};
-    br_move_t vb_move = {-1, -1};
-    br_move_t hr_move = {-1, -1};
-    br_move_t hl_move = {-1, -1};
-    br_move_t ldr_move = {-1, -1};
-    br_move_t ldl_move = {-1, -1};
-    br_move_t rdr_move = {-1, -1};
-    br_move_t rdl_move = {-1, -1};
-    unsigned int vh_counter = 1;
-    unsigned int vb_counter = 1;
-    unsigned int hr_counter = 1;
-    unsigned int hl_counter = 1;
-    unsigned int leftr_diag_counter = 1;
-    unsigned int leftl_diag_counter = 1;
-    unsigned int rightr_diag_counter = 1;
-    unsigned int rightl_diag_counter = 1;
+    br_move_t moves[8] = {{-1, -1}, {-1, -1}, {-1, -1}, {-1, -1}, {-1, -1},
+        {-1, -1}, {-1, -1}, {-1, -1}};
+    unsigned int counters[8] = {1, 1, 1, 1, 1, 1, 1, 1};
     int size = (int)(this->_size);
+    int *board = this->_board;
 
     for (int i = 1; i < 5; i++) {
-        if (x - i > 0) {
-            if (this->_board[y * size + x - i] == playerType) {
-                hl_counter ++;
-            } else if (this->_board[y * size + x - i] == 0) {
-                hl_move = {(x - i), y};
+        if (x - i >= 0) {
+            if (board[y * size + x - i] == playerType) {
+                counters[0]++;
+            } else if (board[y * size + x - i] == 0) {
+                moves[0] = {x - i, y};
             }
         }
         if (x + i < size) {
-            if (this->_board[y * size + x + i] == playerType) {
-                hr_counter ++;
-            } else if (this->_board[y * size + x + i] == 0) {
-                hr_move = {(x + i), y};
+            if (board[y * size + x + i] == playerType) {
+                counters[1]++;
+            } else if (board[y * size + x + i] == 0) {
+                moves[1] = {x + i, y};
             }
         }
-        if (y - i > 0) {
-            if (this->_board[(y - i) * size + x] == playerType) {
-                vb_counter ++;
-            } else if (this->_board[(y - i) * size + x] == 0) {
-                vb_move = {x, (y - i)};
+        if (y - i >= 0) {
+            if (board[(y - i) * size + x] == playerType) {
+                counters[2]++;
+            } else if (board[(y - i) * size + x] == 0) {
+                moves[2] = {x, y - i};
             }
         }
         if (y + i < size) {
-            if (this->_board[(y + i) * size + x] == playerType) {
-                vh_counter ++;
-            } else if (this->_board[(y + i) * size + x] == 0) {
-                vh_move = {x, (y + i)};
+            if (board[(y + i) * size + x] == playerType) {
+                counters[3]++;
+            } else if (board[(y + i) * size + x] == 0) {
+                moves[3] = {x, y + i};
             }
         }
-        if (x - i > 0 && y - i > 0) {
-            if (this->_board[(y - i) * size + x - i] == playerType) {
-                leftl_diag_counter ++;
-            } else if (this->_board[(y - i) * size + x - i] == 0) {
-                ldl_move = {(x - i), (y - i)};
+        if (x - i >= 0 && y - i >= 0) {
+            if (board[(y - i) * size + x - i] == playerType) {
+                counters[4]++;
+            } else if (board[(y - i) * size + x - i] == 0) {
+                moves[4] = {x - i, y - i};
             }
         }
         if (x + i < size && y + i < size) {
-            if (this->_board[(y + i) * size + x + i] == playerType) {
-                rightr_diag_counter ++;
-            } else if (this->_board[(y + i) * size + x + i] == 0) {
-                rdr_move = {(x + i), (y + i)};
+            if (board[(y + i) * size + x + i] == playerType) {
+                counters[5]++;
+            } else if (board[(y + i) * size + x + i] == 0) {
+                moves[5] = {x + i, y + i};
             }
         }
-        if (x - i > 0 && y + i < size) {
-            if (this->_board[(y + i) * size + x - i] == playerType) {
-                leftr_diag_counter ++;
-            } else if (this->_board[(y + i) * size + x - i] == 0) {
-                rdl_move = {(x - i), (y + i)};
+        if (x - i >= 0 && y + i < size) {
+            if (board[(y + i) * size + x - i] == playerType) {
+                counters[6]++;
+            } else if (board[(y + i) * size + x - i] == 0) {
+                moves[6] = {x - i, y + i};
             }
         }
-        if (x + i < size && y - i > 0) {
-            if (this->_board[(y - i) * size + x + i] == playerType) {
-                rightl_diag_counter ++;
-            } else if (this->_board[(y - i) * size + x + i] == 0) {
-                ldr_move = {(x + i), (y - i)};
+        if (x + i < size && y - i >= 0) {
+            if (board[(y - i) * size + x + i] == playerType) {
+                counters[7]++;
+            } else if (board[(y - i) * size + x + i] == 0) {
+                moves[7] = {x + i, y - i};
             }
         }
     }
 
-    if (vh_counter >= 4) {
-        return vh_move;
-    } else if (vb_counter >= 4) {
-        return vb_move;
-    } else if (hr_counter >= 4) {
-        return hr_move;
-    } else if (hl_counter >= 4) {
-        return hl_move;
-    } else if (leftr_diag_counter >= 4) {
-        return ldl_move;
-    } else if (leftl_diag_counter >= 4) {
-        return ldr_move;
-    } else if (rightr_diag_counter >= 4) {
-        return rdr_move;
-    } else if (rightl_diag_counter >= 4) {
-        return rdl_move;
-    } else {
-        return {-1, -1};
+    for (int i = 0; i < 8; i++) {
+        if (counters[i] >= 4) {
+            return moves[i];
+        }
     }
+    return {-1, -1};
 }
 
-br_move_t Game::_victoryMove()
+br_move_t Game::victoryMove()
 {
     br_move_t move = {-1, -1};
     int size = (int)(this->_size);
@@ -198,15 +173,13 @@ br_move_t Game::playMove()
     Minimax minimax(this->_board, this->_size);
     std::pair<int, int> best_move;
     br_move_t move = {0, 0};
-    br_move_t ob_move = this->_victoryMove();
+    br_move_t ob_move = this->victoryMove();
 
     if (ob_move.x > -1) {
         return ob_move;
     }
 
-    best_move = minimax.get_best_move(this->_board);
-    move.x = best_move.first;
-    move.y = best_move.second;
+    move = minimax.get_best_move(this->_board);
 
     // move.x = rand() % this->_size;
     // move.y = rand() % this->_size;

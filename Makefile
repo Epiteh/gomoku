@@ -11,13 +11,24 @@
 
 name = pbrain-gomoku-ai
 
+tests_name = 	unit_tests
+
 src := $(shell find src -wholename 'src/*.cpp')
 
+test_files 	=	$(shell find tests -wholename 'tests/*.cpp')
+
+src_test 	=	src/Game.cpp \
+				src/Minimax.cpp
+
 obj = $(src:.cpp=.o)
+
+obj_test = 	$(src_test:%.c=%.o)
 
 inc = -I./inc
 
 cflags = $(inc) -I -Wall -Wextra -std=c++17
+
+test_flags = --coverage -lcriterion -lm -fprofile-arcs -ftest-coverage -std=c++17
 
 .cpp.o:
 	@g++ -g -c $< -o $(<:.cpp=.o) $(cflags)
@@ -35,7 +46,10 @@ fclean: clean
 	@rm -f $(name)
 	@rm -f ./plugins/*.so
 
-tests_run: fclean
-	@echo "run tests"
+tests_run: fclean $(obj_test)
+	@rm -rf unit_tests*
+	@g++ -o $(tests_name) $(test_files) $(obj_test) $(inc) $(test_flags)
+	@gcovr --exclude tests/
+	@gcovr --exclude tests/ --branches
 
 re: fclean all

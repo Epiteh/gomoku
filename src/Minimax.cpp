@@ -16,6 +16,7 @@ nbc signature powered by love.
 #include <ctime>
 #include <limits.h>
 #include <algorithm>
+#include "Game.hpp"
 #include "Minimax.hpp"
 
 const int INF = INT_MAX;
@@ -52,11 +53,11 @@ auto Minimax::run(int *board, int depth, bool is_max) -> bool
     return (true);
 }
 
-auto Minimax::get_best_move(int *board) -> Move
+auto Minimax::get_best_move(int *board) -> br_move_t
 {
     int size = (int)(this->_size);
     int value = -INF;
-    Move move = {-1, -1};
+    br_move_t move = {-1, -1};
 
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < size; j++) {

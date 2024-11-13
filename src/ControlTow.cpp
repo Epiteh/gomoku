@@ -15,10 +15,6 @@ nbc signature powered by love.
 
 #include "ControlTow.hpp"
 
-ControlTow::ControlTow(Game &game) : _game(game)
-{
-}
-
 void ControlTow::handle_about([[maybe_unused]] std::string &cmd)
 {
     constexpr std::string_view bot_name = "cpp_template";

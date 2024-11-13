@@ -49,8 +49,6 @@ const std::unordered_map<
 
 class ControlTow {
 public:
-    ControlTow(Game &game);
-
     void handle_about([[maybe_unused]] std::string &cmd);
     void handle_start(std::string &cmd);
     void handle_end([[maybe_unused]] std::string &cmd);
@@ -129,5 +127,5 @@ public:
 
 private:
     bool SHOULD_STOP = false;
-    Game &_game;
+    Game _game;
 };
