@@ -137,7 +137,7 @@ br_move_t Game::_getVictoryMove(int x, int y, int playerType)
     return {-1, -1};
 }
 
-br_move_t Game::_victoryMove()
+br_move_t Game::victoryMove()
 {
     br_move_t move = {-1, -1};
     int size = (int)(this->_size);
@@ -173,7 +173,7 @@ br_move_t Game::playMove()
     Minimax minimax(this->_board, this->_size);
     std::pair<int, int> best_move;
     br_move_t move = {0, 0};
-    br_move_t ob_move = this->_victoryMove();
+    br_move_t ob_move = this->victoryMove();
 
     if (ob_move.x > -1) {
         return ob_move;
