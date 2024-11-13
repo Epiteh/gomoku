@@ -14,8 +14,11 @@ nbc signature powered by love.
 */
 
 #include <ctime>
+#include <limits.h>
 #include <algorithm>
 #include "Minimax.hpp"
+
+const int INF = INT_MAX;
 
 Minimax::Minimax(int *board, unsigned int size)
     : _board(board), _size(size)
@@ -49,46 +52,213 @@ auto Minimax::run(int *board, int depth, bool is_max) -> bool
     return (true);
 }
 
-auto Minimax::get_best_move(int *board) -> std::pair<int, int>
+auto Minimax::get_best_move(int *board) -> Move
 {
-    std::pair<int, int> best_move = {-1, -1};
-    int best_value = -10000;
-    int board_size = (int)(this->_size);
-    int max_depth = 3;
+    int size = (int)(this->_size);
+    int value = -INF;
+    Move move = {-1, -1};
 
-    for (int y = 0; y < board_size; y++) {
-        for (int x = 0; x < board_size; x++) {
-            if (board[y * board_size + x] == VOID) {
-                board[y * board_size + x] = MAX_PLAYER;
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
+            if (board[i * size + j] == 0) {
+                board[i * size + j] = 1;
                 int move_value = alpha_beta(
-                    board, max_depth,
-                    -10000, 10000, false
+                    board, 3, -INF, INF, false
                 );
-                board[y * board_size + x] = VOID;
+                board[i * size + j] = 0;
 
-                if (move_value > best_value) {
-                    best_move = {x, y};
-                    best_value = move_value;
+                if (move_value > value) {
+                    move = {i, j};
+                    value = move_value;
                 }
             }
         }
     }
-    return (best_move);
+    return (move);
 }
 
 auto Minimax::_evaluate(int *board) -> int
 {
-    int size = (int)(this->_size);
     int score = 0;
+    int size = (int)(this->_size);
 
-    for (int y = 0; y < size; y++) {
-        for (int x = 0; x < size; x++) {
-            int tile = board[y * size + x];
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
+            if (board[i * size + j] == 1) {
+                if (
+                    j <= size - 3
+                    && board[i * size + j] == board[i * size + j + 1]
+                    && board[i * size + j] == board[i * size + j + 2]
+                ) {
+                    score += 10;
+                }
+                if (
+                    j <= size - 4
+                    && board[i * size + j] == board[i * size + j + 1]
+                    && board[i * size + j] == board[i * size + j + 2]
+                    && board[i * size + j] == board[i * size + j + 3]
+                ) {
+                    score += 100;
+                }
+                if (
+                    j <= size - 5
+                    && board[i * size + j] == board[i * size + j + 1]
+                    && board[i * size + j] == board[i * size + j + 2]
+                    && board[i * size + j] == board[i * size + j + 3]
+                    && board[i * size + j] == board[i * size + j + 4]
+                ) {
+                    score += 1000;
+                }
 
-            if (tile == MAX_PLAYER) {
-                score += 1;
-            } else if (tile == MIN_PLAYER) {
-                score -= 1;
+                if (
+                    i <= size - 3
+                    && board[i * size + j] == board[(i + 1) * size + j]
+                    && board[i * size + j] == board[(i + 2) * size + j]
+                ) {
+                    score += 10;
+                }
+                if (
+                    i <= size - 4
+                    && board[i * size + j] == board[(i + 1) * size + j]
+                    && board[i * size + j] == board[(i + 2) * size + j]
+                    && board[i * size + j] == board[(i + 3) * size + j]
+                ) {
+                    score += 100;
+                }
+                if (
+                    i <= size - 5
+                    && board[i * size + j] == board[(i + 1) * size + j]
+                    && board[i * size + j] == board[(i + 2) * size + j]
+                    && board[i * size + j] == board[(i + 3) * size + j]
+                    && board[i * size + j] == board[(i + 4) * size + j]
+                ) {
+                    score += 1000;
+                }
+
+                if (
+                    i <= size - 3 && j <= size - 3
+                    && board[i * size + j] == board[(i + 1) * size + j + 1]
+                    && board[i * size + j] == board[(i + 2) * size + j + 2]
+                ) {
+                    score += 10;
+                }
+                if (
+                    i <= size - 4 && j <= size - 4
+                    && board[i * size + j] == board[(i + 1) * size + j + 1]
+                    && board[i * size + j] == board[(i + 2) * size + j + 2]
+                    && board[i * size + j] == board[(i + 3) * size + j + 3]
+                ) {
+                    score += 100;
+                }
+                if (
+                    i <= size - 5 && j <= size - 5
+                    && board[i * size + j] == board[(i + 1) * size + j + 1]
+                    && board[i * size + j] == board[(i + 2) * size + j + 2]
+                    && board[i * size + j] == board[(i + 3) * size + j + 3]
+                    && board[i * size + j] == board[(i + 4) * size + j + 4]
+                ) {
+                    score += 1000;
+                }
+            } else if (board[i * size + j] == -1) {
+                if (
+                    j <= size - 3
+                    && board[i * size + j] == board[i * size + j + 1]
+                    && board[i * size + j] == board[i * size + j + 2]
+                ) {
+                    score -= 10;
+                }
+                if (
+                    j <= size - 4
+                    && board[i * size + j] == board[i * size + j + 1]
+                    && board[i * size + j] == board[i * size + j + 2]
+                    && board[i * size + j] == board[i * size + j + 3]
+                ) {
+                    score -= 100;
+                }
+                if (
+                    j <= size - 5
+                    && board[i * size + j] == board[i * size + j + 1]
+                    && board[i * size + j] == board[i * size + j + 2]
+                    && board[i * size + j] == board[i * size + j + 3]
+                    && board[i * size + j] == board[i * size + j + 4]
+                ) {
+                    score -= 1000;
+                }
+
+                if (
+                    i <= size - 3
+                    && board[i * size + j] == board[(i + 1) * size + j]
+                    && board[i * size + j] == board[(i + 2) * size + j]
+                ) {
+                    score -= 10;
+                }
+                if (
+                    i <= size - 4
+                    && board[i * size + j] == board[(i + 1) * size + j]
+                    && board[i * size + j] == board[(i + 2) * size + j]
+                    && board[i * size + j] == board[(i + 3) * size + j]
+                ) {
+                    score -= 100;
+                }
+                if (
+                    i <= size - 5
+                    && board[i * size + j] == board[(i + 1) * size + j]
+                    && board[i * size + j] == board[(i + 2) * size + j]
+                    && board[i * size + j] == board[(i + 3) * size + j]
+                    && board[i * size + j] == board[(i + 4) * size + j]
+                ) {
+                    score -= 1000;
+                }
+
+                if (
+                    i <= size - 3 && j <= size - 3
+                    && board[i * size + j] == board[(i + 1) * size + j + 1]
+                    && board[i * size + j] == board[(i + 2) * size + j + 2]
+                ) {
+                    score -= 10;
+                }
+                if (
+                    i <= size - 4 && j <= size - 4
+                    && board[i * size + j] == board[(i + 1) * size + j + 1]
+                    && board[i * size + j] == board[(i + 2) * size + j + 2]
+                    && board[i * size + j] == board[(i + 3) * size + j + 3]
+                ) {
+                    score -= 100;
+                }
+                if (
+                    i <= size - 5 && j <= size - 5
+                    && board[i * size + j] == board[(i + 1) * size + j + 1]
+                    && board[i * size + j] == board[(i + 2) * size + j + 2]
+                    && board[i * size + j] == board[(i + 3) * size + j + 3]
+                    && board[i * size + j] == board[(i + 4) * size + j + 4]
+                ) {
+                    score -= 1000;
+                }
+
+                if (
+                    i >= 2 && j <= size - 3
+                    && board[i * size + j] == board[(i - 1) * size + j + 1]
+                    && board[i * size + j] == board[(i - 2) * size + j + 2]
+                ) {
+                    score -= 10;
+                }
+                if (
+                    i >= 3 && j <= size - 4
+                    && board[i * size + j] == board[(i - 1) * size + j + 1]
+                    && board[i * size + j] == board[(i - 2) * size + j + 2]
+                    && board[i * size + j] == board[(i - 3) * size + j + 3]
+                ) {
+                    score -= 100;
+                }
+                if (
+                    i >= 4 && j <= size - 5
+                    && board[i * size + j] == board[(i - 1) * size + j + 1]
+                    && board[i * size + j] == board[(i - 2) * size + j + 2]
+                    && board[i * size + j] == board[(i - 3) * size + j + 3]
+                    && board[i * size + j] == board[(i - 4) * size + j + 4]
+                ) {
+                    score -= 1000;
+                }
             }
         }
     }
@@ -103,8 +273,8 @@ auto Minimax::alpha_beta(
     bool is_max
 ) -> int
 {
+    int size = (int)(this->_size);
     int score = this->_evaluate(board);
-    int board_size = (int)(this->_size);
 
     if (
         depth == 0
@@ -115,9 +285,9 @@ auto Minimax::alpha_beta(
     }
 
     if (is_max) {
-        int max = -10000;
+        int max = -INF;
 
-        for (int i = 0; i < board_size; i++) {
+        for (int i = 0; i < size; i++) {
             if (board[i] == VOID) {
                 board[i] = MAX_PLAYER;
 
@@ -136,9 +306,9 @@ auto Minimax::alpha_beta(
         }
         return (max);
     } else {
-        int min = 10000;
+        int min = INF;
 
-        for (int i = 0; i < board_size; i++) {
+        for (int i = 0; i < size; i++) {
             if (board[i] == VOID) {
                 board[i] = MIN_PLAYER;
 
