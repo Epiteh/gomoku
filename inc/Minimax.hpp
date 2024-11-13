@@ -28,6 +28,11 @@ public:
     ~Minimax() = default;
 
     auto get_best_move(int *board) -> br_move_t;
+    auto check_pattern(
+        int *board, int size,
+        int row, int col,
+        const std::vector<int>& pattern
+    ) -> bool;
 
     auto alpha_beta(
         int *board,
