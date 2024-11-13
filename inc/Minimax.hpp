@@ -16,6 +16,7 @@ nbc signature powered by love.
 #pragma once
 
 #include <iostream>
+#include <vector>
 
 class Minimax
 {
