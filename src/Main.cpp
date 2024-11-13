@@ -21,9 +21,8 @@ nbc signature powered by love.
 
 auto main() -> int
 {
-    Game game;
     std::shared_ptr<ControlTow> ct =
-        std::make_shared<ControlTow>(game);
+        std::make_shared<ControlTow>();
 
     srand(time(NULL));
     for (
