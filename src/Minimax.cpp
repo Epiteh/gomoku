@@ -20,7 +20,6 @@ nbc signature powered by love.
 Minimax::Minimax(int *board, unsigned int size)
     : _board(board), _size(size)
 {
-    this->_curTime = time(nullptr);
     this->_best_v = 0;
 }
 

@@ -42,7 +42,6 @@ public:
 private:
     auto _evaluate(int *board) -> int;
 
-    int _curTime;
     int _best_v;
     int *_board;
     unsigned int _size;
