@@ -17,6 +17,11 @@ nbc signature powered by love.
 
 #include <iostream>
 
+struct Move {
+    int row;
+    int col;
+};
+
 class Minimax
 {
 public:
@@ -28,7 +33,7 @@ public:
     ~Minimax() = default;
 
     auto run(int *board, int depth, bool is_max) -> bool;
-    auto get_best_move(int *board) -> std::pair<int, int>;
+    auto get_best_move(int *board) -> Move;
 
     auto alpha_beta(
         int *board,
