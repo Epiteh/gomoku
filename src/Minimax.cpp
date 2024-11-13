@@ -33,7 +33,7 @@ auto Minimax::run(int *board, int depth, bool is_max) -> bool
         for (int x = 0; x < size; x++) {
             tile = this->_board[y * size + x];
 
-            if (tile = Minimax::VOID) {
+            if (tile == Minimax::VOID) {
                 this->_board[y * size + x] = is_max
                     ? Minimax::MAX_PLAYER
                     : Minimax::MIN_PLAYER;
@@ -49,9 +49,9 @@ auto Minimax::run(int *board, int depth, bool is_max) -> bool
     return (true);
 }
 
-auto Minimax::get_best_move(int *board) -> std::pair<int, int>
+br_move_t Minimax::get_best_move(int *board)
 {
-    std::pair<int, int> best_move = {-1, -1};
+    br_move_t best_move = {-1, -1};
     int best_value = -10000;
     int board_size = (int)(this->_size);
     int max_depth = 3;
