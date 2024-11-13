@@ -14,12 +14,60 @@ nbc signature powered by love.
 */
 
 #include <ctime>
+#include <vector>
 #include <limits.h>
 #include <algorithm>
 #include "Game.hpp"
 #include "Minimax.hpp"
 
 const int INF = INT_MAX;
+
+bool game_over(int *board, int size)
+{
+    for (int x = 0; x < size; x++) {
+        for (int y = 0; y < size; y++) {
+            if (board[y * size + x] != 0) {
+                if (
+                    x <= size - 5
+                    && board[y * size + x] == board[y * size + x + 1]
+                    && board[y * size + x] == board[y * size + x + 2]
+                    && board[y * size + x] == board[y * size + x + 3]
+                    && board[y * size + x] == board[y * size + x + 4]
+                ) {
+                    return (true);
+                }
+                if (
+                    y <= size - 5
+                    && board[y * size + x] == board[(y + 1) * size + x]
+                    && board[y * size + x] == board[(y + 2) * size + x]
+                    && board[y * size + x] == board[(y + 3) * size + x]
+                    && board[y * size + x] == board[(y + 4) * size + x]
+                ) {
+                    return (true);
+                }
+                if (
+                    y <= size - 5 && x <= size - 5
+                    && board[y * size + x] == board[(y + 1) * size + x + 1]
+                    && board[y * size + x] == board[(y + 2) * size + x + 2]
+                    && board[y * size + x] == board[(y + 3) * size + x + 3]
+                    && board[y * size + x] == board[(y + 4) * size + x + 4]
+                ) {
+                    return (true);
+                }
+                if (
+                    y >= 4 && x <= size - 5
+                    && board[y * size + x] == board[(y - 1) * size + x + 1]
+                    && board[y * size + x] == board[(y - 2) * size + x + 2]
+                    && board[y * size + x] == board[(y - 3) * size + x + 3]
+                    && board[y * size + x] == board[(y - 4) * size + x + 4]
+                ) {
+                    return (true);
+                }
+            }
+        }
+    }
+    return (false);
+}
 
 Minimax::Minimax(int *board, unsigned int size)
     : _board(board), _size(size)
@@ -37,9 +85,22 @@ auto Minimax::get_best_move(int *board) -> br_move_t
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < size; j++) {
             if (board[i * size + j] == 0) {
+                board[i * size + j] = -1;
+                if (game_over(board, size)) {
+                    board[i * size + j] = 0;
+                    return {i, j};
+                }
+                board[i * size + j] = 0;
+            }
+        }
+    }
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
+            if (board[i * size + j] == 0) {
                 board[i * size + j] = 1;
                 int move_value = alpha_beta(
-                    board, 3, -INF, INF, false
+                    board, 3,
+                    -INF, INF, false
                 );
                 board[i * size + j] = 0;
 
@@ -53,187 +114,93 @@ auto Minimax::get_best_move(int *board) -> br_move_t
     return (move);
 }
 
+auto Minimax::check_pattern(
+    int *board, int size,
+    int row, int col,
+    const std::vector<int>& pattern
+) -> bool
+{
+    if (col <= size - (int)pattern.size()) {
+        bool match = true;
+        for (size_t k = 0; k < pattern.size(); k++) {
+            if (board[row * size + col + k] != pattern[k]) {
+                match = false;
+                break;
+            }
+        }
+        if (match) return (true);
+    }
+
+    if (row <= size - (int)pattern.size()) {
+        bool match = true;
+        for (size_t k = 0; k < pattern.size(); k++) {
+            if (board[(row + k) * size + col] != pattern[k]) {
+                match = false;
+                break;
+            }
+        }
+        if (match) return (true);
+    }
+
+    if (row <= size - (int)pattern.size() && col <= size - (int)pattern.size()) {
+        bool match = true;
+        for (size_t k = 0; k < pattern.size(); k++) {
+            if (board[(row + k) * size + col + k] != pattern[k]) {
+                match = false;
+                break;
+            }
+        }
+        if (match) return (true);
+    }
+
+    if (row >= (int)pattern.size() - 1 && col <= size - (int)pattern.size()) {
+        bool match = true;
+        for (size_t k = 0; k < pattern.size(); k++) {
+            if (board[(row - k) * size + col + k] != pattern[k]) {
+                match = false;
+                break;
+            }
+        }
+        if (match) return (true);
+    }
+    return (false);
+}
+
 auto Minimax::_evaluate(int *board) -> int
 {
     int score = 0;
     int size = (int)(this->_size);
 
+    const std::vector<std::pair<
+        std::vector<int>, int>
+    > patterns = {
+        {{1, 1, 1, 0, 0}, 50},
+        {{0, 1, 1, 1, 0}, 50},
+        {{0, 0, 1, 1, 1}, 50},
+        {{-1, -1, -1, 0, 0}, -50},
+        {{0, -1, -1, -1, 0}, -50},
+        {{0, 0, -1, -1, -1}, -50}
+    };
+
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < size; j++) {
             if (board[i * size + j] == 1) {
-                if (
-                    j <= size - 3
-                    && board[i * size + j] == board[i * size + j + 1]
-                    && board[i * size + j] == board[i * size + j + 2]
-                ) {
-                    score += 10;
-                }
-                if (
-                    j <= size - 4
-                    && board[i * size + j] == board[i * size + j + 1]
-                    && board[i * size + j] == board[i * size + j + 2]
-                    && board[i * size + j] == board[i * size + j + 3]
-                ) {
-                    score += 100;
-                }
-                if (
-                    j <= size - 5
-                    && board[i * size + j] == board[i * size + j + 1]
-                    && board[i * size + j] == board[i * size + j + 2]
-                    && board[i * size + j] == board[i * size + j + 3]
-                    && board[i * size + j] == board[i * size + j + 4]
-                ) {
-                    score += 1000;
-                }
-
-                if (
-                    i <= size - 3
-                    && board[i * size + j] == board[(i + 1) * size + j]
-                    && board[i * size + j] == board[(i + 2) * size + j]
-                ) {
-                    score += 10;
-                }
-                if (
-                    i <= size - 4
-                    && board[i * size + j] == board[(i + 1) * size + j]
-                    && board[i * size + j] == board[(i + 2) * size + j]
-                    && board[i * size + j] == board[(i + 3) * size + j]
-                ) {
-                    score += 100;
-                }
-                if (
-                    i <= size - 5
-                    && board[i * size + j] == board[(i + 1) * size + j]
-                    && board[i * size + j] == board[(i + 2) * size + j]
-                    && board[i * size + j] == board[(i + 3) * size + j]
-                    && board[i * size + j] == board[(i + 4) * size + j]
-                ) {
-                    score += 1000;
-                }
-
-                if (
-                    i <= size - 3 && j <= size - 3
-                    && board[i * size + j] == board[(i + 1) * size + j + 1]
-                    && board[i * size + j] == board[(i + 2) * size + j + 2]
-                ) {
-                    score += 10;
-                }
-                if (
-                    i <= size - 4 && j <= size - 4
-                    && board[i * size + j] == board[(i + 1) * size + j + 1]
-                    && board[i * size + j] == board[(i + 2) * size + j + 2]
-                    && board[i * size + j] == board[(i + 3) * size + j + 3]
-                ) {
-                    score += 100;
-                }
-                if (
-                    i <= size - 5 && j <= size - 5
-                    && board[i * size + j] == board[(i + 1) * size + j + 1]
-                    && board[i * size + j] == board[(i + 2) * size + j + 2]
-                    && board[i * size + j] == board[(i + 3) * size + j + 3]
-                    && board[i * size + j] == board[(i + 4) * size + j + 4]
-                ) {
-                    score += 1000;
+                for (const auto& pattern : patterns) {
+                    if (check_pattern(
+                        board, size, i,
+                        j, pattern.first
+                    )) {
+                        score += pattern.second;
+                    }
                 }
             } else if (board[i * size + j] == -1) {
-                if (
-                    j <= size - 3
-                    && board[i * size + j] == board[i * size + j + 1]
-                    && board[i * size + j] == board[i * size + j + 2]
-                ) {
-                    score -= 10;
-                }
-                if (
-                    j <= size - 4
-                    && board[i * size + j] == board[i * size + j + 1]
-                    && board[i * size + j] == board[i * size + j + 2]
-                    && board[i * size + j] == board[i * size + j + 3]
-                ) {
-                    score -= 100;
-                }
-                if (
-                    j <= size - 5
-                    && board[i * size + j] == board[i * size + j + 1]
-                    && board[i * size + j] == board[i * size + j + 2]
-                    && board[i * size + j] == board[i * size + j + 3]
-                    && board[i * size + j] == board[i * size + j + 4]
-                ) {
-                    score -= 1000;
-                }
-
-                if (
-                    i <= size - 3
-                    && board[i * size + j] == board[(i + 1) * size + j]
-                    && board[i * size + j] == board[(i + 2) * size + j]
-                ) {
-                    score -= 10;
-                }
-                if (
-                    i <= size - 4
-                    && board[i * size + j] == board[(i + 1) * size + j]
-                    && board[i * size + j] == board[(i + 2) * size + j]
-                    && board[i * size + j] == board[(i + 3) * size + j]
-                ) {
-                    score -= 100;
-                }
-                if (
-                    i <= size - 5
-                    && board[i * size + j] == board[(i + 1) * size + j]
-                    && board[i * size + j] == board[(i + 2) * size + j]
-                    && board[i * size + j] == board[(i + 3) * size + j]
-                    && board[i * size + j] == board[(i + 4) * size + j]
-                ) {
-                    score -= 1000;
-                }
-
-                if (
-                    i <= size - 3 && j <= size - 3
-                    && board[i * size + j] == board[(i + 1) * size + j + 1]
-                    && board[i * size + j] == board[(i + 2) * size + j + 2]
-                ) {
-                    score -= 10;
-                }
-                if (
-                    i <= size - 4 && j <= size - 4
-                    && board[i * size + j] == board[(i + 1) * size + j + 1]
-                    && board[i * size + j] == board[(i + 2) * size + j + 2]
-                    && board[i * size + j] == board[(i + 3) * size + j + 3]
-                ) {
-                    score -= 100;
-                }
-                if (
-                    i <= size - 5 && j <= size - 5
-                    && board[i * size + j] == board[(i + 1) * size + j + 1]
-                    && board[i * size + j] == board[(i + 2) * size + j + 2]
-                    && board[i * size + j] == board[(i + 3) * size + j + 3]
-                    && board[i * size + j] == board[(i + 4) * size + j + 4]
-                ) {
-                    score -= 1000;
-                }
-
-                if (
-                    i >= 2 && j <= size - 3
-                    && board[i * size + j] == board[(i - 1) * size + j + 1]
-                    && board[i * size + j] == board[(i - 2) * size + j + 2]
-                ) {
-                    score -= 10;
-                }
-                if (
-                    i >= 3 && j <= size - 4
-                    && board[i * size + j] == board[(i - 1) * size + j + 1]
-                    && board[i * size + j] == board[(i - 2) * size + j + 2]
-                    && board[i * size + j] == board[(i - 3) * size + j + 3]
-                ) {
-                    score -= 100;
-                }
-                if (
-                    i >= 4 && j <= size - 5
-                    && board[i * size + j] == board[(i - 1) * size + j + 1]
-                    && board[i * size + j] == board[(i - 2) * size + j + 2]
-                    && board[i * size + j] == board[(i - 3) * size + j + 3]
-                    && board[i * size + j] == board[(i - 4) * size + j + 4]
-                ) {
-                    score -= 1000;
+                for (const auto& pattern : patterns) {
+                    if (check_pattern(
+                        board, size, i,
+                        j, pattern.first
+                    )) {
+                        score -= pattern.second;
+                    }
                 }
             }
         }
