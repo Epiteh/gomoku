@@ -27,7 +27,6 @@ public:
     Minimax(int *board, unsigned int size);
     ~Minimax() = default;
 
-    auto run(int *board, int depth, bool is_max) -> bool;
     auto get_best_move(int *board) -> br_move_t;
 
     auto alpha_beta(
