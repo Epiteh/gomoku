@@ -16,6 +16,7 @@ nbc signature powered by love.
 #pragma once
 
 #include <iostream>
+#include "Game.hpp"
 
 class Minimax
 {
@@ -28,7 +29,7 @@ public:
     ~Minimax() = default;
 
     auto run(int *board, int depth, bool is_max) -> bool;
-    auto get_best_move(int *board) -> std::pair<int, int>;
+    br_move_t get_best_move(int *board);
 
     auto alpha_beta(
         int *board,
