@@ -14,7 +14,6 @@ nbc signature powered by love.
 */
 
 #include <ctime>
-#include <vector>
 #include <limits.h>
 #include <algorithm>
 #include "Game.hpp"
