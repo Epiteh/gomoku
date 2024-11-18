@@ -46,10 +46,12 @@ fclean: clean
 	@rm -f $(name)
 	@rm -f ./plugins/*.so
 
-tests_run: fclean $(obj_test)
+tests_run: fclean $(obj_test) all
 	@rm -rf unit_tests*
 	@g++ -o $(tests_name) $(test_files) $(obj_test) $(inc) $(test_flags)
 	@gcovr --exclude tests/
 	@gcovr --exclude tests/ --branches
+	@cp $(name) ./tests/liskvork/bin/ais/
+	@cd ./tests/liskvork && ./playmatch.sh all
 
 re: fclean all
