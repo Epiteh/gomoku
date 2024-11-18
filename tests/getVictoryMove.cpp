@@ -27,10 +27,10 @@ Test(victoryMove, test_victoryMove_vectical)
 
     game.setSize(5);
     board = game.getBoard();
-    board[0] = 1;
-    board[5] = 1;
-    board[15] = 1;
-    board[20] = 1;
+    board[0] = -1;
+    board[5] = -1;
+    board[15] = -1;
+    board[20] = -1;
 
     br_move_t move = game.victoryMove();
     cr_assert_eq(move.x, 0);
@@ -45,10 +45,10 @@ Test(victoryMove, test_victoryMove_horizontal)
 
     game.setSize(5);
     board = game.getBoard();
-    board[0] = 1;
-    board[1] = 1;
-    board[3] = 1;
-    board[4] = 1;
+    board[0] = -1;
+    board[1] = -1;
+    board[3] = -1;
+    board[4] = -1;
 
     br_move_t move = game.victoryMove();
     cr_assert_eq(move.x, 2);
@@ -63,10 +63,10 @@ Test(victoryMove, test_victoryMove_left_diagonal)
 
     game.setSize(5);
     board = game.getBoard();
-    board[0] = 1;
-    board[6] = 1;
-    board[18] = 1;
-    board[24] = 1;
+    board[0] = -1;
+    board[6] = -1;
+    board[18] = -1;
+    board[24] = -1;
 
     br_move_t move = game.victoryMove();
     cr_assert_eq(move.x, 2);
@@ -81,10 +81,10 @@ Test(victoryMove, test_victoryMove_right_diagonal)
 
     game.setSize(5);
     board = game.getBoard();
-    board[4] = 1;
-    board[8] = 1;
-    board[16] = 1;
-    board[20] = 1;
+    board[4] = -1;
+    board[8] = -1;
+    board[16] = -1;
+    board[20] = -1;
 
     br_move_t move = game.victoryMove();
     cr_assert_eq(move.x, 2);
@@ -102,10 +102,10 @@ Test(victoryMove, test_player_victoryMove_vectical)
 
     game.setSize(5);
     board = game.getBoard();
-    board[0] = 2;
-    board[5] = 2;
-    board[15] = 2;
-    board[20] = 2;
+    board[0] = 1;
+    board[5] = 1;
+    board[15] = 1;
+    board[20] = 1;
 
     br_move_t move = game.victoryMove();
     cr_assert_eq(move.x, 0);
@@ -120,10 +120,10 @@ Test(victoryMove, test_player_victoryMove_horizontal)
 
     game.setSize(5);
     board = game.getBoard();
-    board[0] = 2;
-    board[1] = 2;
-    board[3] = 2;
-    board[4] = 2;
+    board[0] = 1;
+    board[1] = 1;
+    board[3] = 1;
+    board[4] = 1;
 
     br_move_t move = game.victoryMove();
     cr_assert_eq(move.x, 2);
@@ -138,10 +138,10 @@ Test(victoryMove, test_player_victoryMove_left_diagonal)
 
     game.setSize(5);
     board = game.getBoard();
-    board[0] = 2;
-    board[6] = 2;
-    board[18] = 2;
-    board[24] = 2;
+    board[0] = 1;
+    board[6] = 1;
+    board[18] = 1;
+    board[24] = 1;
 
     br_move_t move = game.victoryMove();
     cr_assert_eq(move.x, 2);
@@ -156,10 +156,10 @@ Test(victoryMove, test_player_victoryMove_right_diagonal)
 
     game.setSize(5);
     board = game.getBoard();
-    board[4] = 2;
-    board[8] = 2;
-    board[16] = 2;
-    board[20] = 2;
+    board[4] = 1;
+    board[8] = 1;
+    board[16] = 1;
+    board[20] = 1;
 
     br_move_t move = game.victoryMove();
     cr_assert_eq(move.x, 2);
@@ -176,14 +176,14 @@ Test(victoryMove, test_victoryMove_vectical_over_block)
 
     game.setSize(5);
     board = game.getBoard();
-    board[0] = 1;
-    board[5] = 1;
-    board[15] = 1;
-    board[20] = 1;
-    board[1] = 2;
-    board[6] = 2;
-    board[11] = 2;
-    board[21] = 2;
+    board[0] = -1;
+    board[5] = -1;
+    board[15] = -1;
+    board[20] = -1;
+    board[1] = 1;
+    board[6] = 1;
+    board[11] = 1;
+    board[21] = 1;
 
     br_move_t move = game.victoryMove();
     cr_assert_eq(move.x, 0);

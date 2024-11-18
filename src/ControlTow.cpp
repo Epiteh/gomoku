@@ -78,12 +78,12 @@ void ControlTow::handle_turn(std::string &cmd)
         unsigned int x = std::stoul(params[0]);
         unsigned int y = std::stoul(params[1]);
 
-        int *board = this->_game.getBoard();
-        board[x * size + y] = 2;
 
         if ((x > size) || (y > size)) {
             throw std::invalid_argument("invalid position");
         }
+        int *board = this->_game.getBoard();
+        board[y * size + x] = -1;
         br_move_t move = this->_game.playMove();
 
         std::cout << move.x << "," << move.y << "\r" << std::endl;
@@ -128,7 +128,7 @@ void ControlTow::handle_board(std::string &cmd)
                 throw std::invalid_argument("invalid position");
                 return;
             }
-            board[y * size + x] = value;
+            board[y * size + x] = value == 2 ? -1 : 1;
         }
     } catch (std::invalid_argument const& ex) {
         std::cout << "ERROR " << ex.what() << "\r" << std::endl;
