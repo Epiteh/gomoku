@@ -39,7 +39,7 @@ auto Minimax::get_best_move(int *board) -> br_move_t
             if (board[i * size + j] == 0) {
                 board[i * size + j] = 1;
                 int move_value = alpha_beta(
-                    board, 3,
+                    board, 2,
                     -INF, INF, false
                 );
                 board[i * size + j] = 0;
