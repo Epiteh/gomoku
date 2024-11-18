@@ -34,20 +34,19 @@ auto Minimax::get_best_move(int *board) -> br_move_t
     int value = -INF;
     br_move_t move = {-1, -1};
 
-    for (int i = 0; i < size; i++) {
-        for (int j = 0; j < size; j++) {
-            if (board[i * size + j] == 0) {
-                board[i * size + j] = 1;
-                int move_value = alpha_beta(
-                    board, 2,
-                    -INF, INF, false
-                );
-                board[i * size + j] = 0;
+    for (int index = 0; index < size * size; index++) {
+        int i = index / size;
+        int j = index % size;
 
-                if (move_value > value) {
-                    move = {j, i};
-                    value = move_value;
-                }
+        if (board[index] == 0) {
+            board[index] = 1;
+
+            int move_value = alpha_beta(board, 2, -INF, INF, false);
+
+            board[index] = 0;
+            if (move_value > value) {
+                move = {j, i};
+                value = move_value;
             }
         }
     }
@@ -82,7 +81,10 @@ auto Minimax::check_pattern(
         if (match) return (true);
     }
 
-    if (row <= size - (int)pattern.size() && col <= size - (int)pattern.size()) {
+    if (
+        row <= size - (int)pattern.size()
+        && col <= size - (int)pattern.size()
+    ) {
         bool match = true;
         for (size_t k = 0; k < pattern.size(); k++) {
             if (board[(row + k) * size + col + k] != pattern[k]) {
@@ -93,7 +95,10 @@ auto Minimax::check_pattern(
         if (match) return (true);
     }
 
-    if (row >= (int)pattern.size() - 1 && col <= size - (int)pattern.size()) {
+    if (
+        row >= (int)pattern.size() - 1
+        && col <= size - (int)pattern.size()
+    ) {
         bool match = true;
         for (size_t k = 0; k < pattern.size(); k++) {
             if (board[(row - k) * size + col + k] != pattern[k]) {
@@ -138,25 +143,20 @@ int Minimax::_evaluate(int *board)
         {{-1, -1, 0}, 25}
     };
 
-    for (int i = 0; i < size; i++) {
-        for (int j = 0; j < size; j++) {
-            if (board[i * size + j] == 1) {
-                for (const auto& pattern : patterns) {
-                    if (check_pattern(
-                        board, size, i,
-                        j, pattern.first
-                    )) {
-                        score += pattern.second;
-                    }
+    for (int index = 0; index < size * size; index++) {
+        int i = index / size;
+        int j = index % size;
+
+        if (board[index] == 1) {
+            for (const auto& pattern : patterns) {
+                if (check_pattern(board, size, i, j, pattern.first)) {
+                    score += pattern.second;
                 }
-            } else if (board[i * size + j] == -1) {
-                for (const auto& pattern : patterns) {
-                    if (check_pattern(
-                        board, size, i,
-                        j, pattern.first
-                    )) {
-                        score -= pattern.second;
-                    }
+            }
+        } else if (board[index] == -1) {
+            for (const auto& pattern : patterns) {
+                if (check_pattern(board, size, i, j, pattern.first)) {
+                    score -= pattern.second;
                 }
             }
         }
