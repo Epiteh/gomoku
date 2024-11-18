@@ -172,13 +172,12 @@ br_move_t Game::playMove()
 {
     Minimax minimax(this->_board, this->_size);
     std::pair<int, int> best_move;
-    br_move_t move = {0, 0};
+    br_move_t move = {-1, -1};
     br_move_t ob_move = this->victoryMove();
 
     if (ob_move.x > -1) {
         return ob_move;
     }
-
     move = minimax.get_best_move(this->_board);
 
     // move.x = rand() % this->_size;

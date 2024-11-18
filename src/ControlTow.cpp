@@ -23,6 +23,11 @@ void ControlTow::handle_about([[maybe_unused]] std::string &cmd)
         << "\", version=\"0.42\"" << std::endl;
 }
 
+ControlTow::ControlTow()
+{
+    this->_game = Game();
+}
+
 void ControlTow::handle_start(std::string &cmd)
 {
     std::vector<std::string> params = this->getCmdParams(cmd);

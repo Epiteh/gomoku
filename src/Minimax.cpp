@@ -87,7 +87,7 @@ auto Minimax::get_best_move(int *board) -> br_move_t
                 board[i * size + j] = -1;
                 if (game_over(board, size)) {
                     board[i * size + j] = 0;
-                    return {i, j};
+                    return {j, i};
                 }
                 board[i * size + j] = 0;
             }
@@ -104,7 +104,7 @@ auto Minimax::get_best_move(int *board) -> br_move_t
                 board[i * size + j] = 0;
 
                 if (move_value > value) {
-                    move = {i, j};
+                    move = {j, i};
                     value = move_value;
                 }
             }

@@ -49,6 +49,8 @@ const std::unordered_map<
 
 class ControlTow {
 public:
+    ControlTow();
+
     void handle_about([[maybe_unused]] std::string &cmd);
     void handle_start(std::string &cmd);
     void handle_end([[maybe_unused]] std::string &cmd);
