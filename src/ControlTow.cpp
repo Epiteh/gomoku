@@ -79,7 +79,7 @@ void ControlTow::handle_turn(std::string &cmd)
         unsigned int y = std::stoul(params[1]);
 
         int *board = this->_game.getBoard();
-        board[y * size + x] = 1;
+        board[y * size + x] = -1;
 
         if ((x > size) || (y > size)) {
             throw std::invalid_argument("invalid position");
