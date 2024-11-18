@@ -21,53 +21,6 @@ nbc signature powered by love.
 
 const int INF = INT_MAX;
 
-bool game_over(int *board, int size)
-{
-    for (int y = 0; y < size; y++) {
-        for (int x = 0; x < size; x++) {
-            if (board[y * size + x] != 0) {
-                if (
-                    x <= size - 5
-                    && board[y * size + x] == board[y * size + x + 1]
-                    && board[y * size + x] == board[y * size + x + 2]
-                    && board[y * size + x] == board[y * size + x + 3]
-                    && board[y * size + x] == board[y * size + x + 4]
-                ) {
-                    return (true);
-                }
-                if (
-                    y <= size - 5
-                    && board[y * size + x] == board[(y + 1) * size + x]
-                    && board[y * size + x] == board[(y + 2) * size + x]
-                    && board[y * size + x] == board[(y + 3) * size + x]
-                    && board[y * size + x] == board[(y + 4) * size + x]
-                ) {
-                    return (true);
-                }
-                if (
-                    y <= size - 5 && x <= size - 5
-                    && board[y * size + x] == board[(y + 1) * size + x + 1]
-                    && board[y * size + x] == board[(y + 2) * size + x + 2]
-                    && board[y * size + x] == board[(y + 3) * size + x + 3]
-                    && board[y * size + x] == board[(y + 4) * size + x + 4]
-                ) {
-                    return (true);
-                }
-                if (
-                    y >= 4 && x <= size - 5
-                    && board[y * size + x] == board[(y - 1) * size + x + 1]
-                    && board[y * size + x] == board[(y - 2) * size + x + 2]
-                    && board[y * size + x] == board[(y - 3) * size + x + 3]
-                    && board[y * size + x] == board[(y - 4) * size + x + 4]
-                ) {
-                    return (true);
-                }
-            }
-        }
-    }
-    return (false);
-}
-
 Minimax::Minimax(int *board, unsigned int size)
     : _board(board), _size(size)
 {
@@ -81,18 +34,6 @@ auto Minimax::get_best_move(int *board) -> br_move_t
     int value = -INF;
     br_move_t move = {-1, -1};
 
-    for (int i = 0; i < size; i++) {
-        for (int j = 0; j < size; j++) {
-            if (board[i * size + j] == 0) {
-                board[i * size + j] = -1;
-                if (game_over(board, size)) {
-                    board[i * size + j] = 0;
-                    return {j, i};
-                }
-                board[i * size + j] = 0;
-            }
-        }
-    }
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < size; j++) {
             if (board[i * size + j] == 0) {
@@ -176,21 +117,25 @@ int Minimax::_evaluate(int *board)
         {{1, 1, 1, 0, 0}, 50},
         {{0, 1, 1, 1, 0}, 50},
         {{0, 0, 1, 1, 1}, 50},
-        {{1, 1, 1, 1, 0}, 500},
-        {{0, 1, 1, 1, 1}, 500},
+        {{1, 1, 1, 1, 0}, 750},
+        {{0, 1, 1, 1, 1}, 750},
         {{1, 1, 1, 1, 1}, 1000},
-        {{1, 1, 1, 0}, 145},
-        {{0, 1, 1, 1}, 145},
+        {{1, 1, 1, 0}, 150},
+        {{0, 1, 1, 1}, 150},
+        {{0, 1, 1, 1}, 150},
         {{0, 1, 1}, 25},
         {{1, 1, 0}, 25},
-        {{-1, -1, -1, 0, 0}, 55},
-        {{0, -1, -1, -1, 0}, 55},
-        {{0, 0, -1, -1, -1}, 55},
-        {{-1, -1, -1, -1, 0}, 500},
-        {{0, -1, -1, -1, -1}, 500},
+        {{-1, -1, -1, 0, 0}, 50},
+        {{0, -1, -1, -1, 0}, 50},
+        {{0, 0, -1, -1, -1}, 50},
+        {{-1, -1, -1, -1, 0}, 750},
+        {{0, -1, -1, -1, -1}, 750},
         {{-1, -1, -1, -1, -1}, 1000},
         {{-1, -1, -1, 0}, 150},
-        {{0, -1, -1, -1}, 150}
+        {{0, -1, -1, -1}, 150},
+        {{0, -1, -1, -1, 0}, 150},
+        {{0, -1, -1}, 25},
+        {{-1, -1, 0}, 25}
     };
 
     for (int i = 0; i < size; i++) {
