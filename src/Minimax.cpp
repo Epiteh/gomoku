@@ -23,8 +23,8 @@ const int INF = INT_MAX;
 
 bool game_over(int *board, int size)
 {
-    for (int x = 0; x < size; x++) {
-        for (int y = 0; y < size; y++) {
+    for (int y = 0; y < size; y++) {
+        for (int x = 0; x < size; x++) {
             if (board[y * size + x] != 0) {
                 if (
                     x <= size - 5
