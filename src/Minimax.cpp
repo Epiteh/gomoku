@@ -24,26 +24,27 @@ const int INF = INT_MAX;
 Minimax::Minimax(int *board, unsigned int size)
     : _board(board), _size(size)
 {
-    this->_curTime = time(nullptr);
-    this->_best_v = 0;
 }
 
-auto Minimax::get_best_move(int *board) -> br_move_t
+auto Minimax::get_best_move() -> br_move_t
 {
-    int size = (int)(this->_size);
     int value = -INF;
     br_move_t move = {-1, -1};
 
-    for (int index = 0; index < size * size; index++) {
-        int i = index / size;
-        int j = index % size;
+    for (
+            int index = 0;
+            index < (int)(this->_size) * (int)(this->_size);
+            index++
+        ) {
+        int i = index / (int)(this->_size);
+        int j = index % (int)(this->_size);
 
-        if (board[index] == 0) {
-            board[index] = 1;
+        if (this->_board[index] == 0) {
+            this->_board[index] = MAX_PLAYER;
 
-            int move_value = alpha_beta(board, 2, -INF, INF, false);
+            int move_value = alpha_beta(DEPTH, -INF, INF, false);
 
-            board[index] = 0;
+            this->_board[index] = VOID;
             if (move_value > value) {
                 move = {j, i};
                 value = move_value;
@@ -54,15 +55,18 @@ auto Minimax::get_best_move(int *board) -> br_move_t
 }
 
 auto Minimax::check_pattern(
-    int *board, int size,
-    int row, int col,
-    const std::vector<int>& pattern
+    int row, int col, const std::vector<int>& pattern
 ) -> bool
 {
-    if (col <= size - (int)pattern.size()) {
+    if (col <= (int)(this->_size) - (int)pattern.size()) {
         bool match = true;
+
         for (size_t k = 0; k < pattern.size(); k++) {
-            if (board[row * size + col + k] != pattern[k]) {
+            if (
+                this->_board[
+                    row * (int)(this->_size) + col + k
+                ] != pattern[k]
+            ) {
                 match = false;
                 break;
             }
@@ -70,10 +74,15 @@ auto Minimax::check_pattern(
         if (match) return (true);
     }
 
-    if (row <= size - (int)pattern.size()) {
+    if (row <= (int)(this->_size) - (int)pattern.size()) {
         bool match = true;
+
         for (size_t k = 0; k < pattern.size(); k++) {
-            if (board[(row + k) * size + col] != pattern[k]) {
+            if (
+                this->_board[
+                    (row + k) * (int)(this->_size) + col
+                ] != pattern[k]
+            ) {
                 match = false;
                 break;
             }
@@ -82,12 +91,16 @@ auto Minimax::check_pattern(
     }
 
     if (
-        row <= size - (int)pattern.size()
-        && col <= size - (int)pattern.size()
+        row <= (int)(this->_size) - (int)pattern.size()
+        && col <= (int)(this->_size) - (int)pattern.size()
     ) {
         bool match = true;
+
         for (size_t k = 0; k < pattern.size(); k++) {
-            if (board[(row + k) * size + col + k] != pattern[k]) {
+            if (
+                this->_board[
+                    (row + k) * (int)(this->_size) + col + k
+                ] != pattern[k]) {
                 match = false;
                 break;
             }
@@ -97,11 +110,15 @@ auto Minimax::check_pattern(
 
     if (
         row >= (int)pattern.size() - 1
-        && col <= size - (int)pattern.size()
+        && col <= (int)(this->_size) - (int)pattern.size()
     ) {
         bool match = true;
+
         for (size_t k = 0; k < pattern.size(); k++) {
-            if (board[(row - k) * size + col + k] != pattern[k]) {
+            if (
+                this->_board[
+                    (row - k) * (int)(this->_size) + col + k
+                ] != pattern[k]) {
                 match = false;
                 break;
             }
@@ -111,10 +128,9 @@ auto Minimax::check_pattern(
     return (false);
 }
 
-int Minimax::_evaluate(int *board)
+int Minimax::_evaluate()
 {
     int score = 0;
-    int size = (int)(this->_size);
 
     const std::vector<std::pair<
         std::vector<int>, int>
@@ -128,6 +144,7 @@ int Minimax::_evaluate(int *board)
         {{1, 1, 1, 0}, 150},
         {{0, 1, 1, 1}, 150},
         {{0, 1, 1, 1}, 150},
+        {{0, 1, 1, 0, 1}, 750},
         {{0, 1, 1}, 25},
         {{1, 1, 0}, 25},
         {{-1, -1, -1, 0, 0}, 50},
@@ -139,23 +156,28 @@ int Minimax::_evaluate(int *board)
         {{-1, -1, -1, 0}, 150},
         {{0, -1, -1, -1}, 150},
         {{0, -1, -1, -1, 0}, 150},
+        {{-1, -1, 0, -1}, 750},
         {{0, -1, -1}, 25},
         {{-1, -1, 0}, 25}
     };
 
-    for (int index = 0; index < size * size; index++) {
-        int i = index / size;
-        int j = index % size;
+    for (
+        int index = 0;
+        index < (int)(this->_size) * (int)(this->_size);
+        index++
+    ) {
+        int i = index / (int)(this->_size);
+        int j = index % (int)(this->_size);
 
-        if (board[index] == 1) {
+        if (this->_board[index] == 1) {
             for (const auto& pattern : patterns) {
-                if (check_pattern(board, size, i, j, pattern.first)) {
+                if (check_pattern(i, j, pattern.first)) {
                     score += pattern.second;
                 }
             }
-        } else if (board[index] == -1) {
+        } else if (this->_board[index] == -1) {
             for (const auto& pattern : patterns) {
-                if (check_pattern(board, size, i, j, pattern.first)) {
+                if (check_pattern(i, j, pattern.first)) {
                     score -= pattern.second;
                 }
             }
@@ -165,15 +187,13 @@ int Minimax::_evaluate(int *board)
 }
 
 auto Minimax::alpha_beta(
-    int *board,
     int depth,
     int alpha,
     int beta,
     bool is_max
 ) -> int
 {
-    int size = (int)(this->_size);
-    int score = this->_evaluate(board);
+    int score = this->_evaluate();
 
     if (
         depth == 0
@@ -186,16 +206,15 @@ auto Minimax::alpha_beta(
     if (is_max) {
         int max = -INF;
 
-        for (int i = 0; i < size; i++) {
-            if (board[i] == VOID) {
-                board[i] = MAX_PLAYER;
+        for (int i = 0; i < (int)(this->_size); i++) {
+            if (this->_board[i] == VOID) {
+                this->_board[i] = MAX_PLAYER;
 
                 int eval = alpha_beta(
-                    board, (depth - 1),
-                    alpha, beta, false
+                    (depth - 1), alpha, beta, false
                 );
 
-                board[i] = VOID;
+                this->_board[i] = VOID;
                 max = std::max(max, eval);
                 alpha = std::max(alpha, eval);
                 if (beta <= alpha) {
@@ -207,16 +226,15 @@ auto Minimax::alpha_beta(
     } else {
         int min = INF;
 
-        for (int i = 0; i < size; i++) {
-            if (board[i] == VOID) {
-                board[i] = MIN_PLAYER;
+        for (int i = 0; i < (int)(this->_size); i++) {
+            if (this->_board[i] == VOID) {
+                this->_board[i] = MIN_PLAYER;
 
                 int eval = alpha_beta(
-                    board, (depth - 1),
-                    alpha, beta, true
+                    (depth - 1), alpha, beta, true
                 );
 
-                board[i] = VOID;
+                this->_board[i] = VOID;
                 min = std::min(min, eval);
                 beta = std::min(beta, eval);
                 if (beta <= alpha) {
