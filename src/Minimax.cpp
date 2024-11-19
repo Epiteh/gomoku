@@ -32,42 +32,33 @@ Minimax::Minimax(int *board, unsigned int size)
 
 auto Minimax::get_best_move() -> br_move_t
 {
-    std::promise<br_move_t> promise;
-    std::future<br_move_t> future = promise.get_future();
+    br_move_t best_move = {-1, -1};
+    int value = -INF;
+    int size = (int)this->_size;
+    int mapSize = size * size;
 
-    std::thread([this, &promise]() {
-        int value = -INF;
-        br_move_t move = {-1, -1};
-        int size = (int)this->_size;
-        int mapSize = size * size;
+    this->_start = std::chrono::steady_clock::now();
+    for (int index = 0; index < mapSize; index++) {
+        int i = index / size;
+        int j = index % size;
 
-        for (int index = 0; index < mapSize; index++) {
-            int i = index / size;
-            int j = index % size;
+        if (this->_board[index] == 0) {
+            this->_board[index] = MAX_PLAYER;
 
-            if (this->_board[index] == 0) {
-                this->_board[index] = MAX_PLAYER;
+            int move_value = alpha_beta(DEPTH, -INF, INF, false);
 
-                int move_value = alpha_beta(DEPTH, -INF, INF, false);
+            if (move_value == -50) {
+                return (best_move);
+            }
 
-                this->_board[index] = VOID;
-                if (move_value > value) {
-                    move = {j, i};
-                    value = move_value;
-                }
+            this->_board[index] = VOID;
+            if (move_value > value) {
+                best_move = {j, i};
+                value = move_value;
             }
         }
-        promise.set_value(move);
-    }).detach();
-
-    if (
-        future.wait_for(std::chrono::milliseconds(2500))
-        == std::future_status::timeout
-    ) {
-        return this->_move;
-    } else {
-        return future.get();
     }
+    return (best_move);
 }
 
 auto Minimax::check_pattern(
@@ -209,6 +200,16 @@ auto Minimax::alpha_beta(
     bool is_max
 ) -> int
 {
+    std::chrono::time_point<std::chrono::steady_clock> end =
+        std::chrono::steady_clock::now();
+    auto elapsed = std::chrono::duration_cast<
+        std::chrono::milliseconds
+    >(end - this->_start).count();
+
+    if (elapsed >= 1500) {
+        return (-50);
+    }
+
     int score = this->_evaluate();
     int size = (int)this->_size;
     int boardSize = size * size;

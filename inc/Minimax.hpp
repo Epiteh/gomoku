@@ -15,8 +15,9 @@ nbc signature powered by love.
 
 #pragma once
 
-#include <iostream>
+#include <chrono>
 #include <vector>
+#include <iostream>
 
 class Minimax
 {
@@ -24,7 +25,7 @@ public:
     const int VOID = 0;
     const int MAX_PLAYER = 1;
     const int MIN_PLAYER = -1;
-    const int DEPTH = 1;
+    const int DEPTH = 2;
 
     Minimax(int *board, unsigned int size);
     ~Minimax() = default;
@@ -48,4 +49,6 @@ private:
     int *_board;
     unsigned int _size;
     br_move_t _move;
+
+    std::chrono::time_point<std::chrono::steady_clock> _start;
 };
