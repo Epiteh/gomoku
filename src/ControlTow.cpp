@@ -83,7 +83,6 @@ void ControlTow::handle_turn(std::string &cmd)
         unsigned int x = std::stoul(params[0]);
         unsigned int y = std::stoul(params[1]);
 
-
         if ((x > size) || (y > size)) {
             throw std::invalid_argument("invalid position");
         }
