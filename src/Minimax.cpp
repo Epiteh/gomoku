@@ -14,6 +14,10 @@ nbc signature powered by love.
 */
 
 #include <ctime>
+#include <chrono>
+#include <iostream>
+#include <thread>
+#include <future>
 #include <limits.h>
 #include <algorithm>
 #include "Game.hpp"
@@ -28,33 +32,42 @@ Minimax::Minimax(int *board, unsigned int size)
 
 auto Minimax::get_best_move() -> br_move_t
 {
-    int value = -INF;
-    br_move_t move = {-1, -1};
-    int size = (int)this->_size;
-    int mapSize = size * size;
+    std::promise<br_move_t> promise;
+    std::future<br_move_t> future = promise.get_future();
 
+    std::thread([this, &promise]() {
+        int value = -INF;
+        br_move_t move = {-1, -1};
+        int size = (int)this->_size;
+        int mapSize = size * size;
 
-    for (
-        int index = 0;
-        index < mapSize;
-        index++
-    ) {
-        int i = index / size;
-        int j = index % size;
+        for (int index = 0; index < mapSize; index++) {
+            int i = index / size;
+            int j = index % size;
 
-        if (this->_board[index] == 0) {
-            this->_board[index] = MAX_PLAYER;
+            if (this->_board[index] == 0) {
+                this->_board[index] = MAX_PLAYER;
 
-            int move_value = alpha_beta(DEPTH, -INF, INF, false);
+                int move_value = alpha_beta(DEPTH, -INF, INF, false);
 
-            this->_board[index] = VOID;
-            if (move_value > value) {
-                move = {j, i};
-                value = move_value;
+                this->_board[index] = VOID;
+                if (move_value > value) {
+                    move = {j, i};
+                    value = move_value;
+                }
             }
         }
+        promise.set_value(move);
+    }).detach();
+
+    if (
+        future.wait_for(std::chrono::milliseconds(2500))
+        == std::future_status::timeout
+    ) {
+        return this->_move;
+    } else {
+        return future.get();
     }
-    return (move);
 }
 
 auto Minimax::check_pattern(

@@ -47,4 +47,5 @@ private:
 
     int *_board;
     unsigned int _size;
+    br_move_t _move;
 };
