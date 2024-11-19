@@ -231,7 +231,7 @@ auto Minimax::alpha_beta(
     } else {
         int min = INF;
 
-        for (int i = 0; i < boardSize; i++) {
+        for (int i = 0; i < size; i++) {
             if (this->_board[i] == VOID) {
                 this->_board[i] = MIN_PLAYER;
 
