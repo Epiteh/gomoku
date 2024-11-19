@@ -140,6 +140,7 @@ br_move_t Game::_getVictoryMove(int x, int y, int playerType)
 br_move_t Game::victoryMove()
 {
     br_move_t move = {-1, -1};
+    br_move_t direct_vic_move = {-1, -1};
     int size = (int)(this->_size);
     int tile;
 
@@ -151,21 +152,12 @@ br_move_t Game::victoryMove()
                 if (move.x > -1) {
                     return move;
                 }
+            } else if (tile == 1 && direct_vic_move.x == -1) {
+                direct_vic_move = this->_getVictoryMove(x, y, tile);
             }
         }
     }
-    for (int y = 0; y < size; y++) {
-        for (int x = 0; x < size; x++) {
-            tile = this->_board[y * size + x];
-            if (tile == 1) {
-                move = this->_getVictoryMove(x, y, tile);
-                if (move.x > -1) {
-                    return move;
-                }
-            }
-        }
-    }
-    return move;
+    return direct_vic_move;
 }
 
 br_move_t Game::playMove()
