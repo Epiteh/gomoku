@@ -24,19 +24,18 @@ public:
     const int VOID = 0;
     const int MAX_PLAYER = 1;
     const int MIN_PLAYER = -1;
+    const int DEPTH = 2;
 
     Minimax(int *board, unsigned int size);
     ~Minimax() = default;
 
-    auto get_best_move(int *board) -> br_move_t;
+    auto get_best_move() -> br_move_t;
     auto check_pattern(
-        int *board, int size,
         int row, int col,
         const std::vector<int>& pattern
     ) -> bool;
 
     auto alpha_beta(
-        int *board,
         int depth,
         int alpha,
         int beta,
@@ -44,10 +43,8 @@ public:
     ) -> int;
 
 private:
-    auto _evaluate(int *board) -> int;
+    auto _evaluate() -> int;
 
-    int _curTime;
-    int _best_v;
     int *_board;
     unsigned int _size;
 };
