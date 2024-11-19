@@ -32,10 +32,10 @@ auto Minimax::get_best_move() -> br_move_t
     br_move_t move = {-1, -1};
 
     for (
-            int index = 0;
-            index < (int)(this->_size) * (int)(this->_size);
-            index++
-        ) {
+        int index = 0;
+        index < (int)(this->_size) * (int)(this->_size);
+        index++
+    ) {
         int i = index / (int)(this->_size);
         int j = index % (int)(this->_size);
 
@@ -161,11 +161,7 @@ int Minimax::_evaluate()
         {{-1, -1, 0}, 25}
     };
 
-    for (
-        int index = 0;
-        index < (int)(this->_size) * (int)(this->_size);
-        index++
-    ) {
+    for (int index = 0; index < (int)(this->_size) * (int)(this->_size); index++) {
         int i = index / (int)(this->_size);
         int j = index % (int)(this->_size);
 
