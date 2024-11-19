@@ -145,8 +145,12 @@ void ControlTow::handle_board(std::string &cmd)
 
 void ControlTow::handle_begin([[maybe_unused]] std::string &cmd)
 {
-    br_move_t move = this->_game.playMove();
-    std::cout << move.x << "," << move.y << "\r" << std::endl;
+    unsigned int size = this->_game.getSize();
+    int x = size / 2;
+    int y = size / 2;
+
+    this->_game.getBoard()[y * size + x] = 1;
+    std::cout << x << "," << y << "\r" << std::endl;
 }
 
 std::vector<std::string> ControlTow::getCmdParams(std::string &cmd)
