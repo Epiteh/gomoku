@@ -30,14 +30,17 @@ auto Minimax::get_best_move() -> br_move_t
 {
     int value = -INF;
     br_move_t move = {-1, -1};
+    int size = (int)this->_size;
+    int mapSize = size * size;
+
 
     for (
         int index = 0;
-        index < (int)(this->_size) * (int)(this->_size);
+        index < mapSize;
         index++
     ) {
-        int i = index / (int)(this->_size);
-        int j = index % (int)(this->_size);
+        int i = index / size;
+        int j = index % size;
 
         if (this->_board[index] == 0) {
             this->_board[index] = MAX_PLAYER;
@@ -58,13 +61,15 @@ auto Minimax::check_pattern(
     int row, int col, const std::vector<int>& pattern
 ) -> bool
 {
-    if (col <= (int)(this->_size) - (int)pattern.size()) {
+    int size = (int)this->_size;
+
+    if (col <= size - (int)pattern.size()) {
         bool match = true;
 
         for (size_t k = 0; k < pattern.size(); k++) {
             if (
                 this->_board[
-                    row * (int)(this->_size) + col + k
+                    row * size + col + k
                 ] != pattern[k]
             ) {
                 match = false;
@@ -74,13 +79,13 @@ auto Minimax::check_pattern(
         if (match) return (true);
     }
 
-    if (row <= (int)(this->_size) - (int)pattern.size()) {
+    if (row <= size - (int)pattern.size()) {
         bool match = true;
 
         for (size_t k = 0; k < pattern.size(); k++) {
             if (
                 this->_board[
-                    (row + k) * (int)(this->_size) + col
+                    (row + k) * size + col
                 ] != pattern[k]
             ) {
                 match = false;
@@ -91,15 +96,15 @@ auto Minimax::check_pattern(
     }
 
     if (
-        row <= (int)(this->_size) - (int)pattern.size()
-        && col <= (int)(this->_size) - (int)pattern.size()
+        row <= size - (int)pattern.size()
+        && col <= size - (int)pattern.size()
     ) {
         bool match = true;
 
         for (size_t k = 0; k < pattern.size(); k++) {
             if (
                 this->_board[
-                    (row + k) * (int)(this->_size) + col + k
+                    (row + k) * size + col + k
                 ] != pattern[k]) {
                 match = false;
                 break;
@@ -110,14 +115,14 @@ auto Minimax::check_pattern(
 
     if (
         row >= (int)pattern.size() - 1
-        && col <= (int)(this->_size) - (int)pattern.size()
+        && col <= size - (int)pattern.size()
     ) {
         bool match = true;
 
         for (size_t k = 0; k < pattern.size(); k++) {
             if (
                 this->_board[
-                    (row - k) * (int)(this->_size) + col + k
+                    (row - k) * size + col + k
                 ] != pattern[k]) {
                 match = false;
                 break;
@@ -131,6 +136,8 @@ auto Minimax::check_pattern(
 int Minimax::_evaluate()
 {
     int score = 0;
+    int size = (int)this->_size;
+    int boardSize = size * size;
 
     const std::vector<std::pair<
         std::vector<int>, int>
@@ -161,9 +168,9 @@ int Minimax::_evaluate()
         {{-1, -1, 0}, 25}
     };
 
-    for (int index = 0; index < (int)(this->_size) * (int)(this->_size); index++) {
-        int i = index / (int)(this->_size);
-        int j = index % (int)(this->_size);
+    for (int index = 0; index < boardSize; index++) {
+        int i = index / size;
+        int j = index % size;
 
         if (this->_board[index] == 1) {
             for (const auto& pattern : patterns) {
@@ -190,6 +197,8 @@ auto Minimax::alpha_beta(
 ) -> int
 {
     int score = this->_evaluate();
+    int size = (int)this->_size;
+    int boardSize = size * size;
 
     if (
         depth == 0
@@ -202,7 +211,7 @@ auto Minimax::alpha_beta(
     if (is_max) {
         int max = -INF;
 
-        for (int i = 0; i < (int)(this->_size); i++) {
+        for (int i = 0; i < boardSize; i++) {
             if (this->_board[i] == VOID) {
                 this->_board[i] = MAX_PLAYER;
 
@@ -222,7 +231,7 @@ auto Minimax::alpha_beta(
     } else {
         int min = INF;
 
-        for (int i = 0; i < (int)(this->_size); i++) {
+        for (int i = 0; i < boardSize; i++) {
             if (this->_board[i] == VOID) {
                 this->_board[i] = MIN_PLAYER;
 
