@@ -181,7 +181,7 @@ auto Minimax::get_best_move() -> br_move_t {
             int moveVal = minimax(DEPTH, INT_MIN, INT_MAX, false);
             _board[i] = 0;
             if (moveVal > bestVal) {
-                bestMove = {i / size, i % size};
+                bestMove = {i % size, i / size};
                 bestVal = moveVal;
             }
         }

@@ -162,24 +162,17 @@ br_move_t Game::victoryMove()
 
 br_move_t Game::playMove()
 {
-    int *boardCopy = new int[this->_size * this->_size];
-    for (unsigned int i = 0; i < this->_size * this->_size; i++) {
-        boardCopy[i] = this->_board[i];
-    }
-    Minimax minimax(boardCopy, this->_size);
-    delete[] boardCopy;
+    Minimax minimax(this->_board, this->_size);
     std::pair<int, int> best_move;
     br_move_t move = {-1, -1};
     br_move_t ob_move = this->victoryMove();
 
-    if (ob_move.x > -1 && this->_board[ob_move.y * this->_size + ob_move.x] == 0) {
+    if (ob_move.x > -1) {
         this->_board[ob_move.y * this->_size + ob_move.x] = 1;
         return ob_move;
     }
-    if (ob_move.x <= -1 || (ob_move.x > -1 && this->_board[ob_move.y * this->_size + ob_move.x] != 0)) {
-        move = minimax.get_best_move();
-    }
-    if (move.x <= -1 || (move.x > -1 && this->_board[move.y * this->_size + move.x] != 0)) {
+    move = minimax.get_best_move();
+    if (move.x <= -1) {
         move.x = rand() % this->_size;
         move.y = rand() % this->_size;
 
