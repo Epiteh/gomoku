@@ -41,7 +41,9 @@ private:
     int evaluate();
     bool isMovesLeft();
     int evaluateLine(int sum);
-    bool checkNeighbours(int index) ;
+    bool checkNeighbours(int index);
+    auto check_pattern(
+    int row, int col, const std::vector<int>& pattern) -> bool;
 
     int *_board;
     unsigned int _size;

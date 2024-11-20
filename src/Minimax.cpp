@@ -22,46 +22,138 @@ bool Minimax::isMovesLeft() {
     return false;
 }
 
-int Minimax::evaluate() {
-    int score = 0;
+auto Minimax::check_pattern(
+    int row, int col, const std::vector<int>& pattern
+) -> bool
+{
+    int size = (int)this->_size;
 
-    for (unsigned int row = 0; row < _size; ++row) {
-        for (unsigned int col = 0; col <= _size - 5; ++col) {
-            int sum = 0;
-            for (unsigned int k = 0; k < 5; ++k) {
-                sum += _board[row * _size + col + k];
+    if (col <= size - (int)pattern.size()) {
+        bool match = true;
+
+        for (size_t k = 0; k < pattern.size(); k++) {
+            if (
+                this->_board[
+                    row * size + col + k
+                ] != pattern[k]
+            ) {
+                match = false;
+                break;
             }
-            score += evaluateLine(sum);
+        }
+        if (match) return (true);
+    }
+
+    if (row <= size - (int)pattern.size()) {
+        bool match = true;
+
+        for (size_t k = 0; k < pattern.size(); k++) {
+            if (
+                this->_board[
+                    (row + k) * size + col
+                ] != pattern[k]
+            ) {
+                match = false;
+                break;
+            }
+        }
+        if (match) return (true);
+    }
+
+    if (
+        row <= size - (int)pattern.size()
+        && col <= size - (int)pattern.size()
+    ) {
+        bool match = true;
+
+        for (size_t k = 0; k < pattern.size(); k++) {
+            if (
+                this->_board[
+                    (row + k) * size + col + k
+                ] != pattern[k]) {
+                match = false;
+                break;
+            }
+        }
+        if (match) return (true);
+    }
+
+    if (
+        row >= (int)pattern.size() - 1
+        && col <= size - (int)pattern.size()
+    ) {
+        bool match = true;
+
+        for (size_t k = 0; k < pattern.size(); k++) {
+            if (
+                this->_board[
+                    (row - k) * size + col + k
+                ] != pattern[k]) {
+                match = false;
+                break;
+            }
+        }
+        if (match) return (true);
+    }
+    return (false);
+}
+
+int Minimax::evaluate()
+{
+    int score = 0;
+    int size = (int)this->_size;
+    int boardSize = size * size;
+    int x;
+    int y;
+
+    const std::vector<std::pair<
+        std::vector<int>, int>
+    > patterns = {
+        {{1, 1, 1, 0, 0}, 50},
+        {{0, 1, 1, 1, 0}, 50},
+        {{0, 0, 1, 1, 1}, 50},
+        {{1, 1, 1, 1, 0}, 750},
+        {{0, 1, 1, 1, 1}, 750},
+        {{1, 1, 1, 1, 1}, 1000},
+        {{1, 1, 1, 0}, 150},
+        {{0, 1, 1, 1}, 150},
+        {{0, 1, 1, 1}, 150},
+        {{0, 1, 1, 0, 1}, 750},
+        {{0, 1, 1}, 25},
+        {{1, 1, 0}, 25},
+        {{-1, -1, -1, 0, 0}, 50},
+        {{0, -1, -1, -1, 0}, 50},
+        {{0, 0, -1, -1, -1}, 50},
+        {{-1, -1, -1, -1, 0}, 750},
+        {{0, -1, -1, -1, -1}, 750},
+        {{-1, -1, -1, -1, -1}, 1000},
+        {{-1, -1, -1, 0}, 150},
+        {{0, -1, -1, -1}, 150},
+        {{0, -1, -1, -1, 0}, 150},
+        {{-1, -1, 0, -1}, 750},
+        {{0, -1, -1}, 25},
+        {{-1, -1, 0}, 25}
+    };
+
+    for (int index = 0; index < boardSize; index++) {
+        y = index / size;
+        x = index % size;
+
+        if (this->_board[index] == 1) {
+            for (const auto& pattern : patterns) {
+                if (check_pattern(y, x, pattern.first)) {
+                    score += pattern.second;
+                }
+            }
+        } else if (this->_board[index] == -1) {
+            for (const auto& pattern : patterns) {
+                if (check_pattern(y, x, pattern.first)) {
+                    score -= pattern.second;
+                }
+            }
         }
     }
-    for (unsigned int col = 0; col < _size; ++col) {
-        for (unsigned int row = 0; row <= _size - 5; ++row) {
-            int sum = 0;
-            for (unsigned int k = 0; k < 5; ++k) {
-                sum += _board[(row + k) * _size + col];
-            }
-            score += evaluateLine(sum);
-        }
-    }
-    for (unsigned int row = 0; row <= _size - 5; ++row) {
-        for (unsigned int col = 0; col <= _size - 5; ++col) {
-            int sum = 0;
-            for (unsigned int k = 0; k < 5; ++k) {
-                sum += _board[(row + k) * _size + col + k];
-            }
-            score += evaluateLine(sum);
-        }
-    }
-    for (unsigned int row = 4; row < _size; ++row) {
-        for (unsigned int col = 0; col <= _size - 5; ++col) {
-            int sum = 0;
-            for (unsigned int k = 0; k < 5; ++k) {
-                sum += _board[(row - k) * _size + col + k];
-            }
-            score += evaluateLine(sum);
-        }
-    }
-    return score;
+    return (score);
 }
 
 int Minimax::evaluateLine(int sum) {
