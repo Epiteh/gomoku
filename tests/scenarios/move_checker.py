@@ -477,11 +477,11 @@ def run_sequential_test(scenario):
 def generate_board(board_setup, played_moves):
     board = [['.' for _ in range(20)] for _ in range(20)]
     for move in board_setup:
-        move = move.replace("'", "")
-        move = move.replace("]", "")
         x, y, player = map(int, move.split(','))
         board[y][x] = 'X' if player == 1 else 'O'
     for move in played_moves:
+        move = move.replace("'", "")
+        move = move.replace("]", "")
         x, y = map(int, move.split(','))
         board[y][x] = '*'
     return board
