@@ -10,106 +10,136 @@
 Minimax::Minimax(int *board, unsigned int size)
     : _board(board), _size(size) {}
 
-int Minimax::_evaluate(int *board) {
-    int score = 0;
-    int size = (int)this->_size;
-
-    for (int i = 0; i < size * size; i++) {
-        if (board[i] == 1) {
-            score += 10;
-        } else if (board[i] == -1) {
-            score -= 10;
+bool Minimax::isMovesLeft() {
+    for (unsigned int i = 0; i < _size * _size; ++i) {
+        if (_board[i] == 0) {
+            return true;
         }
     }
+    return false;
+}
 
+int Minimax::evaluate() {
+    int score = 0;
+
+    for (unsigned int row = 0; row < _size; ++row) {
+        for (unsigned int col = 0; col <= _size - 5; ++col) {
+            int sum = 0;
+            for (unsigned int k = 0; k < 5; ++k) {
+                sum += _board[row * _size + col + k];
+            }
+            score += evaluateLine(sum);
+        }
+    }
+    for (unsigned int col = 0; col < _size; ++col) {
+        for (unsigned int row = 0; row <= _size - 5; ++row) {
+            int sum = 0;
+            for (unsigned int k = 0; k < 5; ++k) {
+                sum += _board[(row + k) * _size + col];
+            }
+            score += evaluateLine(sum);
+        }
+    }
+    for (unsigned int row = 0; row <= _size - 5; ++row) {
+        for (unsigned int col = 0; col <= _size - 5; ++col) {
+            int sum = 0;
+            for (unsigned int k = 0; k < 5; ++k) {
+                sum += _board[(row + k) * _size + col + k];
+            }
+            score += evaluateLine(sum);
+        }
+    }
+    for (unsigned int row = 4; row < _size; ++row) {
+        for (unsigned int col = 0; col <= _size - 5; ++col) {
+            int sum = 0;
+            for (unsigned int k = 0; k < 5; ++k) {
+                sum += _board[(row - k) * _size + col + k];
+            }
+            score += evaluateLine(sum);
+        }
+    }
     return score;
 }
 
-int Minimax::alpha_beta(int *board, int depth, int alpha, int beta, bool is_max) {
-    std::chrono::time_point<std::chrono::steady_clock> end =
-        std::chrono::steady_clock::now();
-    auto elapsed = std::chrono::duration_cast<
-        std::chrono::milliseconds
-    >(end - this->_start).count();
-
-    if (elapsed >= 1500) {
-        return (-50);
+int Minimax::evaluateLine(int sum) {
+    switch (sum) {
+        case 5:
+            return 10000;
+        case -5:
+            return -10000;
+        case 4:
+            return 100;
+        case -4:
+            return -100;
+        case 3:
+            return 10;
+        case -3:
+            return -10;
+        case 2:
+            return 1;
+        case -2:
+            return -1;
+        default:
+            return 0;
     }
-    int size = (int)this->_size;
-    int score = this->_evaluate(board);
-    if (depth == 0 || score == 1000 || score == -1000) {
+}
+
+int Minimax::minimax(int depth, int alpha, int beta, bool isMax) {
+    int score = evaluate();
+
+    if (depth == 0  || score == 10000 || score == -10000|| !isMovesLeft()) {
         return score;
     }
 
-    if (is_max) {
-        int max_eval = -INF;
-        for (int i = 0; i < size * size; i++) {
-            if (board[i] == 0) {
-                board[i] = 1;
-                int eval = alpha_beta(board, depth - 1, alpha, beta, false);
-                board[i] = 0;
-                max_eval = std::max(max_eval, eval);
-                alpha = std::max(alpha, eval);
+    if (isMax) {
+        int best = INT_MIN;
+
+        for (unsigned int i = 0; i < _size * _size; ++i) {
+            if (_board[i] == 0) {
+                _board[i] = 1;
+                best = std::max(best, minimax(depth + 1, alpha, beta, !isMax));
+                _board[i] = 0;
+                alpha = std::max(alpha, best);
                 if (beta <= alpha) {
                     break;
                 }
             }
         }
-        return max_eval;
+        return best;
     } else {
-        int min_eval = INF;
-        for (int i = 0; i < size * size; i++) {
-            if (board[i] == 0) {
-                board[i] = -1;
-                int eval = alpha_beta(board, depth - 1, alpha, beta, true);
-                board[i] = 0;
-                min_eval = std::min(min_eval, eval);
-                beta = std::min(beta, eval);
+        int best = INT_MAX;
+
+        for (unsigned int i = 0; i < _size * _size; ++i) {
+            if (_board[i] == 0) {
+                _board[i] = -1;
+                best = std::min(best, minimax(depth + 1, alpha, beta, !isMax));
+                _board[i] = 0;
+                beta = std::min(beta, best);
                 if (beta <= alpha) {
                     break;
                 }
             }
         }
-        return min_eval;
+        return best;
     }
-}
-
-std::vector<int> Minimax::generate_moves(int *board) {
-    std::vector<int> moves;
-    int size = (int)this->_size;
-
-    for (int i = 0; i < size * size; i++) {
-        if (board[i] == 0) {
-            moves.push_back(i);
-        }
-    }
-
-    return moves;
 }
 
 auto Minimax::get_best_move() -> br_move_t {
-    br_move_t best_move = {-1, -1};
-    int value = -INF;
-    int size = (int)this->_size;
-    int mapSize = size * size;
+    int bestVal = INT_MIN;
+    br_move_t bestMove = {-1, -1};
+    int size = (int) this->_size;
+    int boardSize = size * size;
 
-    this->_start = std::chrono::steady_clock::now();
-
-    for (int i = 0; i < mapSize; i++) {
-        if (this->_board[i] == 0) {
-            this->_board[i] = 1;
-            int move_value = alpha_beta(this->_board, DEPTH, -INF, INF, false);
-            this->_board[i] = 0;
-
-            if (move_value == -50) {
-                return (best_move);
-            }
-            if (move_value > value) {
-                value = move_value;
-                best_move = {i % size, i / size};
+    for (int i = 0; i < boardSize; ++i) {
+        if (_board[i] == 0) {
+            _board[i] = 1;
+            int moveVal = minimax(DEPTH, INT_MIN, INT_MAX, false);
+            _board[i] = 0;
+            if (moveVal > bestVal) {
+                bestMove = {i / size, i % size};
+                bestVal = moveVal;
             }
         }
     }
-
-    return best_move;
+    return bestMove;
 }

@@ -18,6 +18,7 @@ nbc signature powered by love.
 #include <chrono>
 #include <vector>
 #include <iostream>
+#include "Game.hpp"
 
 class Minimax
 {
@@ -33,11 +34,13 @@ public:
 
     auto get_best_move() -> br_move_t;
 
-    int _evaluate(int *board);
-    int alpha_beta(int *board, int depth, int alpha, int beta, bool is_max);
-    std::vector<int> generate_moves(int *board);
+    int minimax(int depth, int alpha, int beta, bool isMax);
 
 private:
+    int evaluate();
+    bool isMovesLeft();
+    int evaluateLine(int sum);
+
     int *_board;
     unsigned int _size;
 
