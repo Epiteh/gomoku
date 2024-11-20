@@ -162,7 +162,12 @@ br_move_t Game::victoryMove()
 
 br_move_t Game::playMove()
 {
-    Minimax minimax(this->_board, this->_size);
+    int *boardCopy = new int[this->_size * this->_size];
+    for (unsigned int i = 0; i < this->_size * this->_size; i++) {
+        boardCopy[i] = this->_board[i];
+    }
+    Minimax minimax(boardCopy, this->_size);
+    delete[] boardCopy;
     std::pair<int, int> best_move;
     br_move_t move = {-1, -1};
     br_move_t ob_move = this->victoryMove();

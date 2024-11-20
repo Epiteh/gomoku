@@ -27,7 +27,7 @@ public:
     const int VOID = 0;
     const int MAX_PLAYER = 1;
     const int MIN_PLAYER = -1;
-    const int DEPTH = 2;
+    const int DEPTH = 1;
     const int INF = INT_MAX;
 
     Minimax(int *board, unsigned int size);
