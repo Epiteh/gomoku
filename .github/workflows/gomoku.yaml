@@ -47,7 +47,7 @@ jobs:
           fetch-depth: 0
       - name: Install Python packages
         run: |
-          pip install tabulate tqdm
+          apt install python3-tabulate python3-tqdm
       - name: Execute the tests
         run: make tests_run
 

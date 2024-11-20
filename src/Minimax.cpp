@@ -1,3 +1,15 @@
+/*
+           d8b
+           ?88
+            88b
+  88bd88b   888888b  d8888b
+  88P' ?8b  88P `?8bd8P' `P
+d88   88P d88,  d8888b
+d88'   88bd88'`?88P'`?888P'
+Author: hodos, 12/11/2024,
+nbc signature powered by love.
+*/
+
 #include <iostream>
 #include <vector>
 #include <algorithm>
