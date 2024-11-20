@@ -127,19 +127,32 @@ int Minimax::minimax(int depth, int alpha, int beta, bool isMax) {
 
 bool Minimax::checkNeighbours(int index) {
     int size = (int) _size;
-    int row = index / size;
-    int col = index % size;
+    int y = index / size;
+    int x = index % size;
 
-    for (int i = -1; i <= 1; ++i) {
-        for (int j = -1; j <= 1; ++j) {
-            int newRow = row + i;
-            int newCol = col + j;
-            if (newRow >= 0 && newRow < size && newCol >= 0 && newCol < size) {
-                if (_board[newRow * size + newCol] != 0) {
-                    return true;
-                }
-            }
-        }
+    if (x > 0 && _board[y * size + (x - 1)] != 0) {
+        return true;
+    }
+    if (y > 0 && _board[(y - 1) * size + x] != 0) {
+        return true;
+    }
+    if (x < size - 1 && _board[y * size + (x + 1)] != 0) {
+        return true;
+    }
+    if (y < size - 1 && _board[(y + 1) * size + x] != 0) {
+        return true;
+    }
+    if (x > 0 && y > 0 && _board[(y - 1) * size + (x - 1)] != 0) {
+        return true;
+    }
+    if (x > 0 && y < size - 1 && _board[(y + 1) * size + (x - 1)] != 0) {
+        return true;
+    }
+    if (x < size - 1 && y < size - 1 && _board[(y + 1) * size + (x + 1)] != 0) {
+        return true;
+    }
+    if (x < size - 1 && y > 0 && _board[(y - 1) * size + (x + 1)] != 0) {
+        return true;
     }
     return false;
 }
