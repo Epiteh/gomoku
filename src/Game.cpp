@@ -172,14 +172,14 @@ br_move_t Game::playMove()
     br_move_t move = {-1, -1};
     br_move_t ob_move = this->victoryMove();
 
-    if (ob_move.x > -1 && this->_board[ob_move.y * this->_size + ob_move.x] != 0) {
+    if (ob_move.x > -1 && this->_board[ob_move.y * this->_size + ob_move.x] == 0) {
         this->_board[ob_move.y * this->_size + ob_move.x] = 1;
         return ob_move;
     }
     if (ob_move.x <= -1 || (ob_move.x > -1 && this->_board[ob_move.y * this->_size + ob_move.x] != 0)) {
         move = minimax.get_best_move();
     }
-    if (move.x <= -1 || (move.x > - 1 && this->_board[move.y * this->_size + move.x] != 0)) {
+    if (move.x <= -1 || (move.x > -1 && this->_board[move.y * this->_size + move.x] != 0)) {
         move.x = rand() % this->_size;
         move.y = rand() % this->_size;
 
