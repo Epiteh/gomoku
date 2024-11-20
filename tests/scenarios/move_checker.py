@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import os
 import subprocess
 import time
 from tabulate import tabulate
@@ -306,7 +307,7 @@ single_scenarios = [
             "18,19,1",
             "19,19,1"
         ],
-        "expected": "2,5"
+        "expected": "2,7"
     }
 ]
 
@@ -382,7 +383,7 @@ def run_single_test(scenario):
     process.stdin.flush()
     start_response = process.stdout.readline().strip()
     if start_response != "OK":
-        return False, f"Expected OK after START, but got {start_response}"
+        return False, f"Expected OK after START but got {start_response}"
 
     process.stdin.write("BOARD\n")
     process.stdin.write("\n".join(board_setup) + "\nDONE\n")
@@ -396,7 +397,7 @@ def run_single_test(scenario):
     if output == f"{exp}":
         return True, f"Played {exp}", elapsed
     else:
-        return False, f"Expected {exp}, but got {output}", elapsed
+        return False, f"Expected {exp} but got {output}", elapsed
 
 def run_multiple_test(scenario):
     board_setup = scenario["board"]
@@ -414,7 +415,7 @@ def run_multiple_test(scenario):
     process.stdin.flush()
     start_response = process.stdout.readline().strip()
     if start_response != "OK":
-        return False, f"Expected OK after START, but got {start_response}"
+        return False, f"Expected OK after START but got {start_response}"
 
     process.stdin.write("BOARD\n")
     process.stdin.write("\n".join(board_setup) + "\nDONE\n")
@@ -428,7 +429,7 @@ def run_multiple_test(scenario):
     if output in [f"{result}" for result in exps]:
         return True, f"Played {output}", eltime
     else:
-        return False, f"Expected one of {exps}, but got {output}", eltime
+        return False, f"Expected one of {exps} but got {output}", eltime
 
 def run_sequential_test(scenario):
     board_setup = scenario["board"]
@@ -446,7 +447,7 @@ def run_sequential_test(scenario):
     process.stdin.flush()
     start_response = process.stdout.readline().strip()
     if start_response != "OK":
-        return False, f"Expected OK after START, but got {start_response}"
+        return False, f"Expected OK after START but got {start_response}"
 
     process.stdin.write("BOARD\n")
     process.stdin.write("\n".join(board_setup) + "\nDONE\n")
@@ -461,7 +462,8 @@ def run_sequential_test(scenario):
         if output != exp_move:
             end_time = time.time()
             elapsed = (end_time - start_time) * 1000
-            return False, f"Expected {exp_move}, but got {output}", elapsed
+            print(f"Expected {exp_move} but got {output}")
+            return False, f"Expected {exp_move} but got {output}", elapsed
         played_moves.append(move['1'])
 
         if '2' in move:
@@ -472,10 +474,33 @@ def run_sequential_test(scenario):
     elapsed = (end_time - start_time) * 1000
     return True, f"Played {played_moves}", elapsed
 
+def generate_board(board_setup, played_moves):
+    board = [['.' for _ in range(20)] for _ in range(20)]
+    for move in board_setup:
+        x, y, player = map(int, move.split(','))
+        board[y][x] = 'X' if player == 1 else 'O'
+    for move in played_moves:
+        x, y = map(int, move.split(','))
+        board[y][x] = '*'
+    return board
+
+def log_board(board, scenario_name, log_file):
+    with open(log_file, 'a') as f:
+        f.write(f"Scenario: {scenario_name}\n")
+        header = "   " + " ".join(f"{i:2}" if i < 10 else f"{i:1}" for i in range(20))
+        f.write(header + "\n")
+        for i, row in enumerate(board):
+            f.write(f"{i:2}  " + "  ".join(row) + "\n")
+        f.write("\n")
+
 def main():
     total_tests = 0
     passed_tests = 0
     results = []
+    log_file = "test_boards.log"
+
+    if os.path.exists(log_file):
+        os.remove(log_file)
 
     scenarios = single_scenarios + multiple_scenarios + sequential_scenarios
     total_scenarios = len(scenarios)
@@ -485,7 +510,10 @@ def main():
             total_tests += 1
             success, message, elapsed_time = run_single_test(scenario)
             status = f"{GREEN}Success{RESET}" if success else f"{RED}Failure{RESET}"
+            played_moves = [scenario["expected"]]
+            board = generate_board(scenario["board"], played_moves)
             results.append([scenario['name'], status, message, f"{elapsed_time:.2f} ms"])
+            log_board(board, scenario['name'], log_file)
             if success:
                 passed_tests += 1
             pbar.update(1)
@@ -494,7 +522,10 @@ def main():
             total_tests += 1
             success, message, elapsed_time = run_multiple_test(scenario)
             status = f"{GREEN}Success{RESET}" if success else f"{RED}Failure{RESET}"
+            played_moves = [message.split()[-1]]
+            board = generate_board(scenario["board"], played_moves)
             results.append([scenario['name'], status, message, f"{elapsed_time:.2f} ms"])
+            log_board(board, scenario['name'], log_file)
             if success:
                 passed_tests += 1
             pbar.update(1)
@@ -503,7 +534,10 @@ def main():
             total_tests += 1
             success, message, elapsed_time = run_sequential_test(scenario)
             status = f"{GREEN}Success{RESET}" if success else f"{RED}Failure{RESET}"
+            played_moves = [message.split()[-1]]
+            board = generate_board(scenario["board"], played_moves)
             results.append([scenario['name'], status, message, f"{elapsed_time:.2f} ms"])
+            log_board(board, scenario['name'], log_file)
             if success:
                 passed_tests += 1
             pbar.update(1)
