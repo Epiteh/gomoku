@@ -177,7 +177,7 @@ br_move_t Game::playMove()
         return ob_move;
     }
     move = minimax.get_best_move();
-    if (move.x <= -1) {
+    if (move.x <= -1 || this->_board[move.y * this->_size + move.x] != 0) {
         move.x = rand() % this->_size;
         move.y = rand() % this->_size;
 
