@@ -28,63 +28,70 @@ int Minimax::evaluate() {
     for (unsigned int row = 0; row < _size; ++row) {
         for (unsigned int col = 0; col <= _size - 5; ++col) {
             int sum = 0;
+            int emptyCount = 0;
             for (unsigned int k = 0; k < 5; ++k) {
                 sum += _board[row * _size + col + k];
+                if (_board[row * _size + col + k] == 0) emptyCount++;
             }
-            score += evaluateLine(sum);
+            score += evaluateLine(sum, emptyCount);
         }
     }
     for (unsigned int col = 0; col < _size; ++col) {
         for (unsigned int row = 0; row <= _size - 5; ++row) {
             int sum = 0;
+            int emptyCount = 0;
             for (unsigned int k = 0; k < 5; ++k) {
                 sum += _board[(row + k) * _size + col];
+                if (_board[(row + k) * _size + col] == 0) emptyCount++;
             }
-            score += evaluateLine(sum);
+            score += evaluateLine(sum, emptyCount);
         }
     }
     for (unsigned int row = 0; row <= _size - 5; ++row) {
         for (unsigned int col = 0; col <= _size - 5; ++col) {
             int sum = 0;
+            int emptyCount = 0;
             for (unsigned int k = 0; k < 5; ++k) {
                 sum += _board[(row + k) * _size + col + k];
+                if (_board[(row + k) * _size + col + k] == 0) emptyCount++;
             }
-            score += evaluateLine(sum);
+            score += evaluateLine(sum, emptyCount);
         }
     }
-    for (unsigned int row = 4; row < _size; ++row) {
-        for (unsigned int col = 0; col <= _size - 5; ++col) {
+    for (unsigned int row = 0; row <= _size - 5; ++row) {
+        for (unsigned int col = 4; col < _size; ++col) {
             int sum = 0;
+            int emptyCount = 0;
             for (unsigned int k = 0; k < 5; ++k) {
-                sum += _board[(row - k) * _size + col + k];
+                sum += _board[(row + k) * _size + col - k];
+                if (_board[(row + k) * _size + col - k] == 0) emptyCount++;
             }
-            score += evaluateLine(sum);
+            score += evaluateLine(sum, emptyCount);
         }
     }
     return score;
 }
 
-int Minimax::evaluateLine(int sum) {
-    switch (sum) {
-        case 5:
-            return 10000;
-        case -5:
-            return -10000;
-        case 4:
-            return 100;
-        case -4:
-            return -100;
-        case 3:
-            return 10;
-        case -3:
-            return -10;
-        case 2:
-            return 1;
-        case -2:
-            return -1;
-        default:
-            return 0;
+int Minimax::evaluateLine(int sum, int emptyCount) {
+    if (sum == 5) return 10000;
+    if (sum == -5) return -10000;
+    if (sum == 4 && emptyCount > 0) return 500;
+    if (sum == -4 && emptyCount > 0) return -500;
+    if (sum == 3 && emptyCount > 1) return 50;
+    if (sum == -3 && emptyCount > 1) return -50;
+    if (sum == 2 && emptyCount > 2) return 10;
+    if (sum == -2 && emptyCount > 2) return -10;
+    return 0;
+}
+
+std::vector<int> Minimax::getPossibleMoves() {
+    std::vector<int> moves;
+    for (unsigned int i = 0; i < _size * _size; ++i) {
+        if (_board[i] == 0 && checkNeighbours(i)) {
+            moves.push_back(i);
+        }
     }
+    return moves;
 }
 
 int Minimax::minimax(int depth, int alpha, int beta, bool isMax) {
@@ -92,33 +99,28 @@ int Minimax::minimax(int depth, int alpha, int beta, bool isMax) {
         return evaluate();
     }
 
+    std::vector<int> moves = getPossibleMoves();
     if (isMax) {
         int best = INT_MIN;
-
-        for (unsigned int i = 0; i < _size * _size; ++i) {
-            if (_board[i] == 0 && checkNeighbours(i)) {
-                _board[i] = 1;
-                best = std::max(best, minimax(depth - 1, alpha, beta, !isMax));
-                _board[i] = 0;
-                alpha = std::max(alpha, best);
-                if (beta <= alpha) {
-                    break;
-                }
+        for (int move : moves) {
+            _board[move] = 1;
+            best = std::max(best, minimax(depth - 1, alpha, beta, !isMax));
+            _board[move] = 0;
+            alpha = std::max(alpha, best);
+            if (beta <= alpha) {
+                break;
             }
         }
         return best;
     } else {
         int best = INT_MAX;
-
-        for (unsigned int i = 0; i < _size * _size; ++i) {
-            if (_board[i] == 0 && checkNeighbours(i)) {
-                _board[i] = -1;
-                best = std::min(best, minimax(depth - 1, alpha, beta, !isMax));
-                _board[i] = 0;
-                beta = std::min(beta, best);
-                if (beta <= alpha) {
-                    break;
-                }
+        for (int move : moves) {
+            _board[move] = -1;
+            best = std::min(best, minimax(depth - 1, alpha, beta, !isMax));
+            _board[move] = 0;
+            beta = std::min(beta, best);
+            if (beta <= alpha) {
+                break;
             }
         }
         return best;

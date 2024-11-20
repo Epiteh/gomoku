@@ -40,10 +40,11 @@ public:
 private:
     int evaluate();
     bool isMovesLeft();
-    int evaluateLine(int sum);
+    int evaluateLine(int sum, int emptyCount);
     bool checkNeighbours(int index);
     auto check_pattern(
     int row, int col, const std::vector<int>& pattern) -> bool;
+    std::vector<int> Minimax::getPossibleMoves();
 
     int *_board;
     unsigned int _size;
