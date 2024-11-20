@@ -44,7 +44,7 @@ private:
     bool checkNeighbours(int index);
     auto check_pattern(
     int row, int col, const std::vector<int>& pattern) -> bool;
-    std::vector<int> Minimax::getPossibleMoves();
+    std::vector<int> getPossibleMoves();
 
     int *_board;
     unsigned int _size;
