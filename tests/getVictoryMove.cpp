@@ -27,81 +27,6 @@ Test(victoryMove, test_victoryMove_vectical)
 
     game.setSize(5);
     board = game.getBoard();
-    board[0] = -1;
-    board[5] = -1;
-    board[15] = -1;
-    board[20] = -1;
-
-    br_move_t move = game.victoryMove();
-    cr_assert_eq(move.x, 0);
-    cr_assert_eq(move.y, 2);
-}
-
-Test(victoryMove, test_victoryMove_horizontal)
-{
-
-    Game game;
-    int *board;
-
-    game.setSize(5);
-    board = game.getBoard();
-    board[0] = -1;
-    board[1] = -1;
-    board[3] = -1;
-    board[4] = -1;
-
-    br_move_t move = game.victoryMove();
-    cr_assert_eq(move.x, 2);
-    cr_assert_eq(move.y, 0);
-}
-
-Test(victoryMove, test_victoryMove_left_diagonal)
-{
-
-    Game game;
-    int *board;
-
-    game.setSize(5);
-    board = game.getBoard();
-    board[0] = -1;
-    board[6] = -1;
-    board[18] = -1;
-    board[24] = -1;
-
-    br_move_t move = game.victoryMove();
-    cr_assert_eq(move.x, 2);
-    cr_assert_eq(move.y, 2);
-}
-
-Test(victoryMove, test_victoryMove_right_diagonal)
-{
-
-    Game game;
-    int *board;
-
-    game.setSize(5);
-    board = game.getBoard();
-    board[4] = -1;
-    board[8] = -1;
-    board[16] = -1;
-    board[20] = -1;
-
-    br_move_t move = game.victoryMove();
-    cr_assert_eq(move.x, 2);
-    cr_assert_eq(move.y, 2);
-}
-
-
-// Block player victory
-
-Test(victoryMove, test_player_victoryMove_vectical)
-{
-
-    Game game;
-    int *board;
-
-    game.setSize(5);
-    board = game.getBoard();
     board[0] = 1;
     board[5] = 1;
     board[15] = 1;
@@ -112,7 +37,7 @@ Test(victoryMove, test_player_victoryMove_vectical)
     cr_assert_eq(move.y, 2);
 }
 
-Test(victoryMove, test_player_victoryMove_horizontal)
+Test(victoryMove, test_victoryMove_horizontal)
 {
 
     Game game;
@@ -130,7 +55,7 @@ Test(victoryMove, test_player_victoryMove_horizontal)
     cr_assert_eq(move.y, 0);
 }
 
-Test(victoryMove, test_player_victoryMove_left_diagonal)
+Test(victoryMove, test_victoryMove_left_diagonal)
 {
 
     Game game;
@@ -148,7 +73,7 @@ Test(victoryMove, test_player_victoryMove_left_diagonal)
     cr_assert_eq(move.y, 2);
 }
 
-Test(victoryMove, test_player_victoryMove_right_diagonal)
+Test(victoryMove, test_victoryMove_right_diagonal)
 {
 
     Game game;
@@ -166,9 +91,10 @@ Test(victoryMove, test_player_victoryMove_right_diagonal)
     cr_assert_eq(move.y, 2);
 }
 
-// Priorise victory move instead of blocking player
 
-Test(victoryMove, test_victoryMove_vectical_over_block)
+// Block player victory
+
+Test(victoryMove, test_player_victoryMove_vectical)
 {
 
     Game game;
@@ -180,10 +106,84 @@ Test(victoryMove, test_victoryMove_vectical_over_block)
     board[5] = -1;
     board[15] = -1;
     board[20] = -1;
-    board[1] = 1;
-    board[6] = 1;
-    board[11] = 1;
-    board[21] = 1;
+
+    br_move_t move = game.victoryMove();
+    cr_assert_eq(move.x, 0);
+    cr_assert_eq(move.y, 2);
+}
+
+Test(victoryMove, test_player_victoryMove_horizontal)
+{
+
+    Game game;
+    int *board;
+
+    game.setSize(5);
+    board = game.getBoard();
+    board[0] = -1;
+    board[1] = -1;
+    board[3] = -1;
+    board[4] = -1;
+
+    br_move_t move = game.victoryMove();
+    cr_assert_eq(move.x, 2);
+    cr_assert_eq(move.y, 0);
+}
+
+Test(victoryMove, test_player_victoryMove_left_diagonal)
+{
+
+    Game game;
+    int *board;
+
+    game.setSize(5);
+    board = game.getBoard();
+    board[0] = -1;
+    board[6] = -1;
+    board[18] = -1;
+    board[24] = -1;
+
+    br_move_t move = game.victoryMove();
+    cr_assert_eq(move.x, 2);
+    cr_assert_eq(move.y, 2);
+}
+
+Test(victoryMove, test_player_victoryMove_right_diagonal)
+{
+
+    Game game;
+    int *board;
+
+    game.setSize(5);
+    board = game.getBoard();
+    board[4] = -1;
+    board[8] = -1;
+    board[16] = -1;
+    board[20] = -1;
+
+    br_move_t move = game.victoryMove();
+    cr_assert_eq(move.x, 2);
+    cr_assert_eq(move.y, 2);
+}
+
+// Priorise victory move instead of blocking player
+
+Test(victoryMove, test_victoryMove_vectical_over_block)
+{
+
+    Game game;
+    int *board;
+
+    game.setSize(5);
+    board = game.getBoard();
+    board[0] = 1;
+    board[5] = 1;
+    board[15] = 1;
+    board[20] = 1;
+    board[1] = -1;
+    board[6] = -1;
+    board[11] = -1;
+    board[21] = -1;
 
     br_move_t move = game.victoryMove();
     cr_assert_eq(move.x, 0);
