@@ -47,8 +47,9 @@ jobs:
           fetch-depth: 0
       - name: Install Python packages in a virtual environment
         run: |
-          apt-get install -y python3-venv
-          python3 -m venv venv
+          apt-get install -y python3-pip
+          pip3 install virtualenv
+          virtualenv venv
           source venv/bin/activate
           pip install tabulate tqdm
       - name: Execute the tests
