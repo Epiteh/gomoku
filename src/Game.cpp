@@ -73,56 +73,56 @@ br_move_t Game::_getVictoryMove(int x, int y, int playerType)
     for (int i = 1; i < 5; i++) {
         if (x - i >= 0) {
             if (board[y * size + x - i] == playerType) {
-                counters[0]++;
+                counters[0] += 1;
             } else if (board[y * size + x - i] == 0) {
                 moves[0] = {x - i, y};
             }
         }
         if (x + i < size) {
             if (board[y * size + x + i] == playerType) {
-                counters[1]++;
+                counters[1]+= 1;
             } else if (board[y * size + x + i] == 0) {
                 moves[1] = {x + i, y};
             }
         }
         if (y - i >= 0) {
             if (board[(y - i) * size + x] == playerType) {
-                counters[2]++;
+                counters[2] += 1;
             } else if (board[(y - i) * size + x] == 0) {
                 moves[2] = {x, y - i};
             }
         }
         if (y + i < size) {
             if (board[(y + i) * size + x] == playerType) {
-                counters[3]++;
+                counters[3] += 1;
             } else if (board[(y + i) * size + x] == 0) {
                 moves[3] = {x, y + i};
             }
         }
         if (x - i >= 0 && y - i >= 0) {
             if (board[(y - i) * size + x - i] == playerType) {
-                counters[4]++;
+                counters[4] += 1;
             } else if (board[(y - i) * size + x - i] == 0) {
                 moves[4] = {x - i, y - i};
             }
         }
         if (x + i < size && y + i < size) {
             if (board[(y + i) * size + x + i] == playerType) {
-                counters[5]++;
+                counters[5] += 1;
             } else if (board[(y + i) * size + x + i] == 0) {
                 moves[5] = {x + i, y + i};
             }
         }
         if (x - i >= 0 && y + i < size) {
             if (board[(y + i) * size + x - i] == playerType) {
-                counters[6]++;
+                counters[6] += 1;
             } else if (board[(y + i) * size + x - i] == 0) {
                 moves[6] = {x - i, y + i};
             }
         }
         if (x + i < size && y - i >= 0) {
             if (board[(y - i) * size + x + i] == playerType) {
-                counters[7]++;
+                counters[7] += 1;
             } else if (board[(y - i) * size + x + i] == 0) {
                 moves[7] = {x + i, y - i};
             }
