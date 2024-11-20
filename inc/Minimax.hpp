@@ -41,6 +41,7 @@ private:
     int evaluate();
     bool isMovesLeft();
     int evaluateLine(int sum);
+    bool checkNeighbours(int index) ;
 
     int *_board;
     unsigned int _size;

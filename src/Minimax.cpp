@@ -11,7 +11,10 @@ Minimax::Minimax(int *board, unsigned int size)
     : _board(board), _size(size) {}
 
 bool Minimax::isMovesLeft() {
-    for (unsigned int i = 0; i < _size * _size; ++i) {
+    int size = (int) _size;
+    int boardSize = size * size;
+
+    for (int i = 0; i < boardSize; ++i) {
         if (_board[i] == 0) {
             return true;
         }
@@ -85,19 +88,17 @@ int Minimax::evaluateLine(int sum) {
 }
 
 int Minimax::minimax(int depth, int alpha, int beta, bool isMax) {
-    int score = evaluate();
-
-    if (depth == 0  || score == 10000 || score == -10000|| !isMovesLeft()) {
-        return score;
+    if (depth == 0 || !isMovesLeft()) {
+        return evaluate();
     }
 
     if (isMax) {
         int best = INT_MIN;
 
         for (unsigned int i = 0; i < _size * _size; ++i) {
-            if (_board[i] == 0) {
+            if (_board[i] == 0 && checkNeighbours(i)) {
                 _board[i] = 1;
-                best = std::max(best, minimax(depth + 1, alpha, beta, !isMax));
+                best = std::max(best, minimax(depth - 1, alpha, beta, !isMax));
                 _board[i] = 0;
                 alpha = std::max(alpha, best);
                 if (beta <= alpha) {
@@ -110,9 +111,9 @@ int Minimax::minimax(int depth, int alpha, int beta, bool isMax) {
         int best = INT_MAX;
 
         for (unsigned int i = 0; i < _size * _size; ++i) {
-            if (_board[i] == 0) {
+            if (_board[i] == 0 && checkNeighbours(i)) {
                 _board[i] = -1;
-                best = std::min(best, minimax(depth + 1, alpha, beta, !isMax));
+                best = std::min(best, minimax(depth - 1, alpha, beta, !isMax));
                 _board[i] = 0;
                 beta = std::min(beta, best);
                 if (beta <= alpha) {
@@ -122,6 +123,25 @@ int Minimax::minimax(int depth, int alpha, int beta, bool isMax) {
         }
         return best;
     }
+}
+
+bool Minimax::checkNeighbours(int index) {
+    int size = (int) _size;
+    int row = index / size;
+    int col = index % size;
+
+    for (int i = -1; i <= 1; ++i) {
+        for (int j = -1; j <= 1; ++j) {
+            int newRow = row + i;
+            int newCol = col + j;
+            if (newRow >= 0 && newRow < size && newCol >= 0 && newCol < size) {
+                if (_board[newRow * size + newCol] != 0) {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
 }
 
 auto Minimax::get_best_move() -> br_move_t {
