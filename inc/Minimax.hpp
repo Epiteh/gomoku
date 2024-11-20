@@ -18,6 +18,7 @@ nbc signature powered by love.
 #include <chrono>
 #include <vector>
 #include <iostream>
+#include <climits>
 #include "Game.hpp"
 
 class Minimax
