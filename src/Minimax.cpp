@@ -46,6 +46,10 @@ auto Minimax::get_best_move() -> br_move_t
             this->_board[index] = MAX_PLAYER;
 
                 int move_value = alpha_beta(
+                    j - 4 < 0 ? 0 : j - 4,
+                    j + 4 > size ? size : j + 4,
+                    i - 4 < 0 ? 0 : i - 4,
+                    i + 4 > size ? size : i + 4,
                     DEPTH, -INF, INF, false);
 
             if (move_value == -50) {
@@ -138,12 +142,15 @@ auto Minimax::check_pattern(
     return (false);
 }
 
-int Minimax::_evaluate() {
+int Minimax::_evaluate()
+{
     int score = 0;
     int size = (int)this->_size;
     int boardSize = size * size;
 
-    const std::vector<std::pair<std::vector<int>, int>> patterns = {
+    const std::vector<std::pair<
+        std::vector<int>, int>
+    > patterns = {
         {{1, 1, 1, 0, 0}, 50},
         {{0, 1, 1, 1, 0}, 50},
         {{0, 0, 1, 1, 1}, 50},
@@ -188,12 +195,21 @@ int Minimax::_evaluate() {
             }
         }
     }
-
-    return score;
+    return (score);
 }
 
-int Minimax::alpha_beta(int depth, int alpha, int beta, bool is_max) {
+auto Minimax::alpha_beta(
+    int x_min,
+    int x_max,
+    int y_min,
+    int y_max,
 
+    int depth,
+    int alpha,
+    int beta,
+    bool is_max
+) -> int
+{
     std::chrono::time_point<std::chrono::steady_clock> end =
         std::chrono::steady_clock::now();
     auto elapsed = std::chrono::duration_cast<
@@ -203,42 +219,86 @@ int Minimax::alpha_beta(int depth, int alpha, int beta, bool is_max) {
     if (elapsed >= 1500) {
         return (-50);
     }
-    int size = (int)this->_size;
-    int score = this->_evaluate();
 
-    if (depth == 0 || score == 1000 || score == -1000) {
-        return score;
+    int score = this->_evaluate();
+    int size = (int)this->_size;
+    int boardSize = size * size;
+    int y;
+    int x;
+
+    if (
+        depth == 0
+        || score == 1000
+        || score == -1000
+    ) {
+        return (score);
     }
 
     if (is_max) {
-        int max_eval = INT_MIN;
-        for (int i = 0; i < size * size; i++) {
-            if (this->_board[i] == 0) {
-                this->_board[i] = 1;
-                int eval = alpha_beta(depth - 1, alpha, beta, false);
-                this->_board[i] = 0;
-                max_eval = std::max(max_eval, eval);
+        int max = -INF;
+
+        for (int i = y_min * size + x_min; i < ((y_max * size) + x_max); i++) {
+            y = i / size;
+            x = i % size;
+
+            if (y < y_min || y >= y_max) {
+                continue;
+            }
+            if (x < x_min || x >= x_max) {
+                continue;
+            }
+            if (this->_board[i] == VOID) {
+                this->_board[i] = MAX_PLAYER;
+
+                int eval = alpha_beta(
+                    x - 4 < 0 ? 0 : x - 4,
+                    x + 4 > size ? size : x + 4,
+                    y - 4 < 0 ? 0 : y - 4,
+                    y + 4 > size ? size : y + 4,
+                    (depth - 1), alpha, beta, false
+                );
+
+                this->_board[i] = VOID;
+                max = std::max(max, eval);
                 alpha = std::max(alpha, eval);
                 if (beta <= alpha) {
                     break;
                 }
             }
         }
-        return max_eval;
+        return (max);
     } else {
-        int min_eval = INT_MAX;
-        for (int i = 0; i < size * size; i++) {
-            if (this->_board[i] == 0) {
-                this->_board[i] = -1;
-                int eval = alpha_beta(depth - 1, alpha, beta, true);
-                this->_board[i] = 0;
-                min_eval = std::min(min_eval, eval);
+        int min = INF;
+
+        for (int i = y_min * size + x_min; i < ((y_max * size) + x_max); i++) {
+            y = i / size;
+            x = i % size;
+
+            if (y < y_min || y >= y_max) {
+                continue;
+            }
+            if (x < x_min || x >= x_max) {
+                continue;
+            }
+            if (this->_board[i] == VOID) {
+                this->_board[i] = MIN_PLAYER;
+
+                int eval = alpha_beta(
+                    x - 4 < 0 ? 0 : x - 4,
+                    x + 4 > size ? size : x + 4,
+                    y - 4 < 0 ? 0 : y - 4,
+                    y + 4 > size ? size : y + 4,
+                    (depth - 1), alpha, beta, true
+                );
+
+                this->_board[i] = VOID;
+                min = std::min(min, eval);
                 beta = std::min(beta, eval);
                 if (beta <= alpha) {
                     break;
                 }
             }
         }
-        return min_eval;
+        return (min);
     }
 }
