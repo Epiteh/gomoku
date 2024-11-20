@@ -52,11 +52,10 @@ auto Minimax::get_best_move() -> br_move_t
                     i + 4 > size ? size : i + 4,
                     DEPTH, -INF, INF, false);
 
+            this->_board[index] = VOID;
             if (move_value == -50) {
                 return (best_move);
             }
-
-            this->_board[index] = VOID;
             if (move_value > value) {
                 best_move = {j, i};
                 value = move_value;
