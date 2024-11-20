@@ -146,7 +146,7 @@ br_move_t Game::victoryMove()
     for (int y = 0; y < size; y++) {
         for (int x = 0; x < size; x++) {
             tile = this->_board[y * size + x];
-            if (tile == -1) {
+            if (tile == 1) {
                 move = this->_getVictoryMove(x, y, tile);
                 if (move.x > -1) {
                     return move;
@@ -157,7 +157,7 @@ br_move_t Game::victoryMove()
     for (int y = 0; y < size; y++) {
         for (int x = 0; x < size; x++) {
             tile = this->_board[y * size + x];
-            if (tile == 1) {
+            if (tile == -1) {
                 move = this->_getVictoryMove(x, y, tile);
                 if (move.x > -1) {
                     return move;
