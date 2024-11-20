@@ -37,10 +37,6 @@ public:
     ) -> bool;
 
     auto alpha_beta(
-        int x_min,
-        int x_max,
-        int y_min,
-        int y_max,
         int depth,
         int alpha,
         int beta,

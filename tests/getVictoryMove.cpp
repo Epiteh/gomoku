@@ -189,3 +189,31 @@ Test(victoryMove, test_victoryMove_vectical_over_block)
     cr_assert_eq(move.x, 0);
     cr_assert_eq(move.y, 2);
 }
+
+Test(victoryMove, test_victoryMove_vectical_tests_block)
+{
+
+    Game game;
+    int *board;
+
+    game.setSize(6);
+    board = game.getBoard();
+    board[5] = 1;
+    board[7] = -1;
+    board[10] = -1;
+    board[12] = 1;
+    board[13] = -1;
+    board[14] = -1;
+    board[15] = -1;
+    board[16] = -1;
+    board[17] = 1;
+    board[19] = -1;
+    board[20] = -1;
+    board[21] = 1;
+    board[25] = -1;
+    board[30] = -1;
+
+    br_move_t move = game.victoryMove();
+    cr_assert_eq(move.x, 1);
+    cr_assert_eq(move.y, 5);
+}
