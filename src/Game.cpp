@@ -154,7 +154,6 @@ br_move_t Game::victoryMove()
                 }
             } else if (tile == -1 && protect_move.x == -1) {
                 protect_move = this->_getVictoryMove(x, y, tile);
-                std::cerr << "protect move: " << protect_move.x << " " << protect_move.y << std::endl;
             }
         }
     }
