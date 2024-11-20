@@ -45,13 +45,19 @@ clean:
 fclean: clean
 	@rm -f $(name)
 	@rm -f ./plugins/*.so
+	@rm -rf *.gc*
+	@rm -f ./tests/liskvork/bin/ais/$(name)
+	@rm -f ./tests/scenarios/$(name)
 
 tests_run: fclean $(obj_test) all
 	@rm -rf unit_tests*
+	@rm -rf *.gc*
 	@g++ -o $(tests_name) $(test_files) $(obj_test) $(inc) $(test_flags)
 	@gcovr --exclude tests/
 	@gcovr --exclude tests/ --branches
 	@cp $(name) ./tests/liskvork/bin/ais/
+	@cp $(name) ./tests/scenarios/
 	@cd ./tests/liskvork && ./playmatch.sh all
+	@./tests/scenarios/move_checker.py
 
 re: fclean all
