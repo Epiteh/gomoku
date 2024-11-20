@@ -45,12 +45,16 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Install Python packages
+      - name: Install Python packages in a virtual environment
         run: |
-          apt-get install -y python3-pip
-          pip3 install tabulate tqdm
+          apt-get install -y python3-venv
+          python3 -m venv venv
+          source venv/bin/activate
+          pip install tabulate tqdm
       - name: Execute the tests
-        run: make tests_run
+        run: |
+          source venv/bin/activate
+          make tests_run
 
   # generate_doc:
   #   if: github.ref == 'refs/heads/main'
