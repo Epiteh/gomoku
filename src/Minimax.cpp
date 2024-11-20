@@ -28,135 +28,119 @@ int Minimax::evaluate() {
     for (unsigned int row = 0; row < _size; ++row) {
         for (unsigned int col = 0; col <= _size - 5; ++col) {
             int sum = 0;
-            int emptyCount = 0;
             for (unsigned int k = 0; k < 5; ++k) {
                 sum += _board[row * _size + col + k];
-                if (_board[row * _size + col + k] == 0) emptyCount++;
             }
-            score += evaluateLine(sum, emptyCount);
+            score += evaluateLine(sum);
         }
     }
     for (unsigned int col = 0; col < _size; ++col) {
         for (unsigned int row = 0; row <= _size - 5; ++row) {
             int sum = 0;
-            int emptyCount = 0;
             for (unsigned int k = 0; k < 5; ++k) {
                 sum += _board[(row + k) * _size + col];
-                if (_board[(row + k) * _size + col] == 0) emptyCount++;
             }
-            score += evaluateLine(sum, emptyCount);
+            score += evaluateLine(sum);
         }
     }
     for (unsigned int row = 0; row <= _size - 5; ++row) {
         for (unsigned int col = 0; col <= _size - 5; ++col) {
             int sum = 0;
-            int emptyCount = 0;
             for (unsigned int k = 0; k < 5; ++k) {
                 sum += _board[(row + k) * _size + col + k];
-                if (_board[(row + k) * _size + col + k] == 0) emptyCount++;
             }
-            score += evaluateLine(sum, emptyCount);
+            score += evaluateLine(sum);
         }
     }
-    for (unsigned int row = 0; row <= _size - 5; ++row) {
-        for (unsigned int col = 4; col < _size; ++col) {
+    for (unsigned int row = 4; row < _size; ++row) {
+        for (unsigned int col = 0; col <= _size - 5; ++col) {
             int sum = 0;
-            int emptyCount = 0;
             for (unsigned int k = 0; k < 5; ++k) {
-                sum += _board[(row + k) * _size + col - k];
-                if (_board[(row + k) * _size + col - k] == 0) emptyCount++;
+                sum += _board[(row - k) * _size + col + k];
             }
-            score += evaluateLine(sum, emptyCount);
+            score += evaluateLine(sum);
         }
     }
     return score;
 }
 
-int Minimax::evaluateLine(int sum, int emptyCount) {
-    if (sum == 5) return 10000;
-    if (sum == -5) return -10000;
-    if (sum == 4 && emptyCount > 0) return 500;
-    if (sum == -4 && emptyCount > 0) return -500;
-    if (sum == 3 && emptyCount > 1) return 50;
-    if (sum == -3 && emptyCount > 1) return -50;
-    if (sum == 2 && emptyCount > 2) return 10;
-    if (sum == -2 && emptyCount > 2) return -10;
-    return 0;
-}
-
-std::vector<int> Minimax::getPossibleMoves() {
-    std::vector<int> moves;
-    for (unsigned int i = 0; i < _size * _size; ++i) {
-        if (_board[i] == 0 && checkNeighbours(i)) {
-            moves.push_back(i);
-        }
+int Minimax::evaluateLine(int sum) {
+    switch (sum) {
+        case 5:
+            return 10000;
+        case -5:
+            return -10000;
+        case 4:
+            return 100;
+        case -4:
+            return -100;
+        case 3:
+            return 10;
+        case -3:
+            return -10;
+        case 2:
+            return 1;
+        case -2:
+            return -1;
+        default:
+            return 0;
     }
-    return moves;
 }
 
 int Minimax::minimax(int depth, int alpha, int beta, bool isMax) {
     if (depth == 0 || !isMovesLeft()) {
         return evaluate();
     }
-
-    std::vector<int> moves = getPossibleMoves();
     if (isMax) {
         int best = INT_MIN;
-        for (int move : moves) {
-            _board[move] = 1;
-            best = std::max(best, minimax(depth - 1, alpha, beta, !isMax));
-            _board[move] = 0;
-            alpha = std::max(alpha, best);
-            if (beta <= alpha) {
-                break;
+
+        for (unsigned int i = 0; i < _size * _size; ++i) {
+            if (_board[i] == 0 && isInScope(i)) {
+                _board[i] = 1;
+                best = std::max(best, minimax(depth - 1, alpha, beta, !isMax));
+                _board[i] = 0;
+                alpha = std::max(alpha, best);
+                if (beta <= alpha) {
+                    break;
+                }
             }
         }
         return best;
     } else {
         int best = INT_MAX;
-        for (int move : moves) {
-            _board[move] = -1;
-            best = std::min(best, minimax(depth - 1, alpha, beta, !isMax));
-            _board[move] = 0;
-            beta = std::min(beta, best);
-            if (beta <= alpha) {
-                break;
+
+        for (unsigned int i = 0; i < _size * _size; ++i) {
+            if (_board[i] == 0 && isInScope(i)) {
+                _board[i] = -1;
+                best = std::min(best, minimax(depth - 1, alpha, beta, !isMax));
+                _board[i] = 0;
+                beta = std::min(beta, best);
+                if (beta <= alpha) {
+                    break;
+                }
             }
         }
         return best;
     }
 }
 
-bool Minimax::checkNeighbours(int index) {
+bool Minimax::isInScope(int index) {
     int size = (int) _size;
     int y = index / size;
     int x = index % size;
 
-    if (x > 0 && _board[y * size + (x - 1)] != 0) {
-        return true;
-    }
-    if (y > 0 && _board[(y - 1) * size + x] != 0) {
-        return true;
-    }
-    if (x < size - 1 && _board[y * size + (x + 1)] != 0) {
-        return true;
-    }
-    if (y < size - 1 && _board[(y + 1) * size + x] != 0) {
-        return true;
-    }
-    if (x > 0 && y > 0 && _board[(y - 1) * size + (x - 1)] != 0) {
-        return true;
-    }
-    if (x > 0 && y < size - 1 && _board[(y + 1) * size + (x - 1)] != 0) {
-        return true;
-    }
-    if (x < size - 1 && y < size - 1 && _board[(y + 1) * size + (x + 1)] != 0) {
-        return true;
-    }
-    if (x < size - 1 && y > 0 && _board[(y - 1) * size + (x + 1)] != 0) {
-        return true;
-    }
+    static const int directions[8][2] = {
+        {-1, 0}, {1, 0}, {0, -1}, {0, 1},
+        {-1, -1}, {1, 1}, {-1, 1}, {1, -1}
+    };
 
+    for (const auto& dir : directions) {
+        int newX = x + dir[0];
+        int newY = y + dir[1];
+        if (newX >= 0 && newX < size && newY >= 0 && newY < size && _board[newY * size + newX] != 0) {
+            return true;
+        }
+    }
     return false;
 }
 
