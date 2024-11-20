@@ -128,41 +128,19 @@ bool Minimax::isInScope(int index) {
     int size = (int) _size;
     int y = index / size;
     int x = index % size;
-
-    if (x > 0 && _board[y * size + (x - 1)] != 0) {
-        return true;
-    }
-    if (y > 0 && _board[(y - 1) * size + x] != 0) {
-        return true;
-    }
-    if (x < size - 1 && _board[y * size + (x + 1)] != 0) {
-        return true;
-    }
-    if (y < size - 1 && _board[(y + 1) * size + x] != 0) {
-        return true;
-    }
-    if (x > 0 && y > 0 && _board[(y - 1) * size + (x - 1)] != 0) {
-        return true;
-    }
-    if (x > 0 && y < size - 1 && _board[(y + 1) * size + (x - 1)] != 0) {
-        return true;
-    }
-    if (x < size - 1 && y < size - 1 && _board[(y + 1) * size + (x + 1)] != 0) {
-        return true;
-    }
-    if (x < size - 1 && y > 0 && _board[(y - 1) * size + (x + 1)] != 0) {
-        return true;
-    }
-
-    static const int directions[8][2] = {
+    int newX = 0;
+    int newY = 0;
+    const int directions[8][2] = {
         {-1, 0}, {1, 0}, {0, -1}, {0, 1},
         {-1, -1}, {1, 1}, {-1, 1}, {1, -1}
     };
 
     for (const auto& dir : directions) {
-        int newX = x + dir[0];
-        int newY = y + dir[1];
-        if (newX >= 0 && newX < size && newY >= 0 && newY < size && _board[newY * size + newX] != 0) {
+        newX = x + dir[0];
+        newY = y + dir[1];
+        if (newX >= 0 && newX < size
+            && newY >= 0 && newY < size
+            && _board[newY * size + newX] != 0) {
             return true;
         }
     }
