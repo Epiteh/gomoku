@@ -45,7 +45,12 @@ auto Minimax::get_best_move() -> br_move_t
         if (this->_board[index] == 0) {
             this->_board[index] = MAX_PLAYER;
 
-            int move_value = alpha_beta(DEPTH, -INF, INF, false);
+                int move_value = alpha_beta(
+                    j - 4 < 0 ? 0 : j - 4,
+                    j + 4 > size ? size : j + 4,
+                    i - 4 < 0 ? 0 : i - 4,
+                    i + 4 > size ? size : i + 4,
+                    DEPTH, -INF, INF, false);
 
             if (move_value == -50) {
                 return (best_move);
@@ -194,6 +199,11 @@ int Minimax::_evaluate()
 }
 
 auto Minimax::alpha_beta(
+    int x_min,
+    int x_max,
+    int y_min,
+    int y_max,
+
     int depth,
     int alpha,
     int beta,
@@ -213,6 +223,8 @@ auto Minimax::alpha_beta(
     int score = this->_evaluate();
     int size = (int)this->_size;
     int boardSize = size * size;
+    int y;
+    int x;
 
     if (
         depth == 0
@@ -225,11 +237,24 @@ auto Minimax::alpha_beta(
     if (is_max) {
         int max = -INF;
 
-        for (int i = 0; i < size; i++) {
+        for (int i = y_min * size + x_min; i < ((y_max * size) + x_max); i++) {
+            y = i / size;
+            x = i % size;
+
+            if (y < y_min || y >= y_max) {
+                continue;
+            }
+            if (x < x_min || x >= x_max) {
+                continue;
+            }
             if (this->_board[i] == VOID) {
                 this->_board[i] = MAX_PLAYER;
 
                 int eval = alpha_beta(
+                    x - 4 < 0 ? 0 : x - 4,
+                    x + 4 > size ? size : x + 4,
+                    y - 4 < 0 ? 0 : y - 4,
+                    y + 4 > size ? size : y + 4,
                     (depth - 1), alpha, beta, false
                 );
 
@@ -245,11 +270,24 @@ auto Minimax::alpha_beta(
     } else {
         int min = INF;
 
-        for (int i = 0; i < size; i++) {
+        for (int i = y_min * size + x_min; i < ((y_max * size) + x_max); i++) {
+            y = i / size;
+            x = i % size;
+
+            if (y < y_min || y >= y_max) {
+                continue;
+            }
+            if (x < x_min || x >= x_max) {
+                continue;
+            }
             if (this->_board[i] == VOID) {
                 this->_board[i] = MIN_PLAYER;
 
                 int eval = alpha_beta(
+                    x - 4 < 0 ? 0 : x - 4,
+                    x + 4 > size ? size : x + 4,
+                    y - 4 < 0 ? 0 : y - 4,
+                    y + 4 > size ? size : y + 4,
                     (depth - 1), alpha, beta, true
                 );
 

@@ -37,6 +37,10 @@ public:
     ) -> bool;
 
     auto alpha_beta(
+        int x_min,
+        int x_max,
+        int y_min,
+        int y_max,
         int depth,
         int alpha,
         int beta,
@@ -48,7 +52,6 @@ private:
 
     int *_board;
     unsigned int _size;
-    br_move_t _move;
 
     std::chrono::time_point<std::chrono::steady_clock> _start;
 };
