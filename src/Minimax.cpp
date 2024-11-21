@@ -1,5 +1,4 @@
 /*
-
            d8b
            ?88
             88b
@@ -7,245 +6,175 @@
   88P' ?8b  88P `?8bd8P' `P
 d88   88P d88,  d8888b
 d88'   88bd88'`?88P'`?888P'
-
 Author: hodos, 12/11/2024,
 nbc signature powered by love.
-
 */
 
-#include <ctime>
-#include <chrono>
 #include <iostream>
-#include <thread>
-#include <future>
-#include <limits.h>
+#include <vector>
 #include <algorithm>
+#include <climits>
+#include <chrono>
+
 #include "Game.hpp"
 #include "Minimax.hpp"
 
-const int INF = INT_MAX;
-
 Minimax::Minimax(int *board, unsigned int size)
-    : _board(board), _size(size)
-{
-}
+    : _board(board), _size(size) {}
 
-auto Minimax::get_best_move() -> br_move_t
-{
-    br_move_t best_move = {-1, -1};
-    int value = -INF;
-    int size = (int)this->_size;
-    int mapSize = size * size;
-
-    this->_start = std::chrono::steady_clock::now();
-    for (int index = 0; index < mapSize; index++) {
-        int i = index / size;
-        int j = index % size;
-
-        if (this->_board[index] == 0) {
-            this->_board[index] = MAX_PLAYER;
-
-                int move_value = alpha_beta(
-                    // j - 4 < 0 ? 0 : j - 4,
-                    // j + 4 > size ? size : j + 4,
-                    // i - 4 < 0 ? 0 : i - 4,
-                    // i + 4 > size ? size : i + 4,
-                    DEPTH, -INF, INF, false);
-
-            this->_board[index] = VOID;
-            if (move_value == -50) {
-                return (best_move);
-            }
-            if (move_value > value) {
-                best_move = {j, i};
-                value = move_value;
-            }
-        }
-    }
-    return (best_move);
-}
-
-auto Minimax::check_pattern(
-    int row, int col, const std::vector<int>& pattern
-) -> bool
-{
-    int size = (int)this->_size;
-
-    if (col <= size - (int)pattern.size()) {
-        bool match = true;
-
-        for (size_t k = 0; k < pattern.size(); k++) {
-            if (
-                this->_board[
-                    row * size + col + k
-                ] != pattern[k]
-            ) {
-                match = false;
-                break;
-            }
-        }
-        if (match) return (true);
-    }
-
-    if (row <= size - (int)pattern.size()) {
-        bool match = true;
-
-        for (size_t k = 0; k < pattern.size(); k++) {
-            if (
-                this->_board[
-                    (row + k) * size + col
-                ] != pattern[k]
-            ) {
-                match = false;
-                break;
-            }
-        }
-        if (match) return (true);
-    }
-
-    if (
-        row <= size - (int)pattern.size()
-        && col <= size - (int)pattern.size()
-    ) {
-        bool match = true;
-
-        for (size_t k = 0; k < pattern.size(); k++) {
-            if (
-                this->_board[
-                    (row + k) * size + col + k
-                ] != pattern[k]) {
-                match = false;
-                break;
-            }
-        }
-        if (match) return (true);
-    }
-
-    if (
-        row >= (int)pattern.size() - 1
-        && col <= size - (int)pattern.size()
-    ) {
-        bool match = true;
-
-        for (size_t k = 0; k < pattern.size(); k++) {
-            if (
-                this->_board[
-                    (row - k) * size + col + k
-                ] != pattern[k]) {
-                match = false;
-                break;
-            }
-        }
-        if (match) return (true);
-    }
-    return (false);
-}
-
-int Minimax::_evaluate()
-{
-    int score = 0;
-    int size = (int)this->_size;
+bool Minimax::isMovesLeft() {
+    int size = (int) _size;
     int boardSize = size * size;
-    int x;
-    int y;
 
-    const std::vector<std::pair<
-        std::vector<int>, int>
-    > patterns = {
-        {{1, 1, 1, 0, 0}, 50},
-        {{0, 1, 1, 1, 0}, 50},
-        {{0, 0, 1, 1, 1}, 50},
-        {{1, 1, 1, 1, 0}, 750},
-        {{0, 1, 1, 1, 1}, 750},
-        {{1, 1, 1, 1, 1}, 1000},
-        {{1, 1, 1, 0}, 150},
-        {{0, 1, 1, 1}, 150},
-        {{0, 1, 1, 1}, 150},
-        {{0, 1, 1, 0, 1}, 750},
-        {{0, 1, 1}, 25},
-        {{1, 1, 0}, 25},
-        {{-1, -1, -1, 0, 0}, 50},
-        {{0, -1, -1, -1, 0}, 50},
-        {{0, 0, -1, -1, -1}, 50},
-        {{-1, -1, -1, -1, 0}, 750},
-        {{0, -1, -1, -1, -1}, 750},
-        {{-1, -1, -1, -1, -1}, 1000},
-        {{-1, -1, -1, 0}, 150},
-        {{0, -1, -1, -1}, 150},
-        {{0, -1, -1, -1, 0}, 150},
-        {{-1, -1, 0, -1}, 750},
-        {{0, -1, -1}, 25},
-        {{-1, -1, 0}, 25}
+    for (int i = 0; i < boardSize; ++i) {
+        if (_board[i] == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+int Minimax::evaluate() {
+    int score = 0;
+
+    for (unsigned int row = 0; row < _size; ++row) {
+        for (unsigned int col = 0; col <= _size - 5; ++col) {
+            int sum = 0;
+            for (unsigned int k = 0; k < 5; ++k) {
+                sum += _board[row * _size + col + k];
+            }
+            score += evaluateLine(sum);
+        }
+    }
+    for (unsigned int col = 0; col < _size; ++col) {
+        for (unsigned int row = 0; row <= _size - 5; ++row) {
+            int sum = 0;
+            for (unsigned int k = 0; k < 5; ++k) {
+                sum += _board[(row + k) * _size + col];
+            }
+            score += evaluateLine(sum);
+        }
+    }
+    for (unsigned int row = 0; row <= _size - 5; ++row) {
+        for (unsigned int col = 0; col <= _size - 5; ++col) {
+            int sum = 0;
+            for (unsigned int k = 0; k < 5; ++k) {
+                sum += _board[(row + k) * _size + col + k];
+            }
+            score += evaluateLine(sum);
+        }
+    }
+    for (unsigned int row = 4; row < _size; ++row) {
+        for (unsigned int col = 0; col <= _size - 5; ++col) {
+            int sum = 0;
+            for (unsigned int k = 0; k < 5; ++k) {
+                sum += _board[(row - k) * _size + col + k];
+            }
+            score += evaluateLine(sum);
+        }
+    }
+    return score;
+}
+
+int Minimax::evaluateLine(int sum) {
+    switch (sum) {
+        case 5:
+            return 10000;
+        case -5:
+            return -10000;
+        case 4:
+            return 100;
+        case -4:
+            return -100;
+        case 3:
+            return 10;
+        case -3:
+            return -10;
+        case 2:
+            return 1;
+        case -2:
+            return -1;
+        default:
+            return 0;
+    }
+}
+
+int Minimax::minimax(int depth, int alpha, int beta, bool isMax) {
+    if (depth == 0 || !isMovesLeft()) {
+        return evaluate();
+    }
+    if (isMax) {
+        int best = INT_MIN;
+
+        for (unsigned int i = 0; i < _size * _size; ++i) {
+            if (_board[i] == 0 && isInScope(i)) {
+                _board[i] = 1;
+                best = std::max(best, minimax(depth - 1, alpha, beta, !isMax));
+                _board[i] = 0;
+                alpha = std::max(alpha, best);
+                if (beta <= alpha) {
+                    break;
+                }
+            }
+        }
+        return best;
+    } else {
+        int best = INT_MAX;
+
+        for (unsigned int i = 0; i < _size * _size; ++i) {
+            if (_board[i] == 0 && isInScope(i)) {
+                _board[i] = -1;
+                best = std::min(best, minimax(depth - 1, alpha, beta, !isMax));
+                _board[i] = 0;
+                beta = std::min(beta, best);
+                if (beta <= alpha) {
+                    break;
+                }
+            }
+        }
+        return best;
+    }
+}
+
+bool Minimax::isInScope(int index) {
+    int size = (int) _size;
+    int y = index / size;
+    int x = index % size;
+    int newX = 0;
+    int newY = 0;
+    const int directions[8][2] = {
+        {-1, 0}, {1, 0}, {0, -1}, {0, 1},
+        {-1, -1}, {1, 1}, {-1, 1}, {1, -1}
     };
 
-    for (int index = 0; index < boardSize; index++) {
-        y = index / size;
-        x = index % size;
-
-        if (this->_board[index] == 1) {
-            for (const auto& pattern : patterns) {
-                if (check_pattern(y, x, pattern.first)) {
-                    score += pattern.second;
-                }
-            }
-        } else if (this->_board[index] == -1) {
-            for (const auto& pattern : patterns) {
-                if (check_pattern(y, x, pattern.first)) {
-                    score -= pattern.second;
-                }
-            }
+    for (const auto& dir : directions) {
+        newX = x + dir[0];
+        newY = y + dir[1];
+        if (newX >= 0 && newX < size
+            && newY >= 0 && newY < size
+            && _board[newY * size + newX] != 0) {
+            return true;
         }
     }
-    return (score);
+    return false;
 }
 
-int Minimax::alpha_beta(int depth, int alpha, int beta, bool is_max) {
+auto Minimax::get_best_move() -> br_move_t {
+    int bestVal = INT_MIN;
+    br_move_t bestMove = {-1, -1};
+    int size = (int) this->_size;
+    int boardSize = size * size;
 
-    std::chrono::time_point<std::chrono::steady_clock> end =
-        std::chrono::steady_clock::now();
-    auto elapsed = std::chrono::duration_cast<
-        std::chrono::milliseconds
-    >(end - this->_start).count();
-
-    if (elapsed >= 1500) {
-        return (-50);
-    }
-    int size = (int)this->_size;
-    int score = this->_evaluate();
-
-    if (depth == 0 || score == 1000 || score == -1000) {
-        return score;
-    }
-
-    if (is_max) {
-        int max_eval = INT_MIN;
-        for (int i = 0; i < size * size; i++) {
-            if (this->_board[i] == 0) {
-                this->_board[i] = 1;
-                int eval = alpha_beta(depth - 1, alpha, beta, false);
-                this->_board[i] = 0;
-                max_eval = std::max(max_eval, eval);
-                alpha = std::max(alpha, eval);
-                if (beta <= alpha) {
-                    break;
-                }
+    for (int i = 0; i < boardSize; ++i) {
+        if (_board[i] == 0) {
+            _board[i] = 1;
+            int moveVal = minimax(DEPTH, INT_MIN, INT_MAX, false);
+            _board[i] = 0;
+            if (moveVal > bestVal) {
+                bestMove = {i % size, i / size};
+                bestVal = moveVal;
             }
         }
-        return max_eval;
-    } else {
-        int min_eval = INT_MAX;
-        for (int i = 0; i < size * size; i++) {
-            if (this->_board[i] == 0) {
-                this->_board[i] = -1;
-                int eval = alpha_beta(depth - 1, alpha, beta, true);
-                this->_board[i] = 0;
-                min_eval = std::min(min_eval, eval);
-                beta = std::min(beta, eval);
-                if (beta <= alpha) {
-                    break;
-                }
-            }
-        }
-        return min_eval;
     }
+    return bestMove;
 }

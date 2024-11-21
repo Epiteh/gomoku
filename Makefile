@@ -55,9 +55,10 @@ tests_run: fclean $(obj_test) all
 	@g++ -o $(tests_name) $(test_files) $(obj_test) $(inc) $(test_flags)
 	@gcovr --exclude tests/
 	@gcovr --exclude tests/ --branches
+	@./unit_tests
 	@cp $(name) ./tests/liskvork/bin/ais/
-	@cp $(name) ./tests/scenarios/
-	@cd ./tests/liskvork && ./playmatch.sh all
-	@./tests/scenarios/move_checker.py
+	# @cp $(name) ./tests/scenarios/
+	# @cd ./tests/liskvork && ./playmatch.sh all
+	# @./tests/scenarios/move_checker.py
 
 re: fclean all

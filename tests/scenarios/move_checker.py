@@ -480,6 +480,8 @@ def generate_board(board_setup, played_moves):
         x, y, player = map(int, move.split(','))
         board[y][x] = 'X' if player == 1 else 'O'
     for move in played_moves:
+        move = move.replace("'", "")
+        move = move.replace("]", "")
         x, y = map(int, move.split(','))
         board[y][x] = '*'
     return board
