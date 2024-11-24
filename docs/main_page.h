@@ -41,11 +41,16 @@ nbc signature powered by love.
  *  - A line with a sum of -5 (all cells occupied by the minimizing player) gets a high negative score.
  *  - Partial lines (with sums of 4, 3, 2, etc.) get progressively smaller scores.
  *
- * #### Minimax Algorithm with Alpha-Beta Pruning
+ * #### Minimax Algorithm
  * - The minimax method implements the Minimax algorithm with alpha-beta pruning. It recursively evaluates the possible moves up to a certain depth:
  *  - If the depth is 0 or there are no moves left, it returns the evaluated score of the board.
  *  - If it is the maximizing player's turn, it tries to maximize the score by exploring all possible moves, updating the alpha value, and pruning branches where beta is less than or equal to alpha.
  *  - If it is the minimizing player's turn, it tries to minimize the score by exploring all possible moves, updating the beta value, and pruning branches where beta is less than or equal to alpha.
+ *
+ * #### Alpha-Beta pruning
+ * Alpha beta pruning allows us to identify moves which will never be played early on. After all, one player maximizes the outcome while the other minimizes it. The part of the search tree where a player
+ * would end up in a worse situation based on the evaluation function can be entirely removed from the list of nodes we want to expand and explore. We prune those nodes from our search tree and therefore
+ * reduce its width.
  *
  * #### Checking Move Scope
  * - The isInScope method checks if a move is within the scope of the current game state. It ensures that the move is adjacent to an already occupied cell, making the algorithm more efficient by focusing on relevant moves.
@@ -61,4 +66,5 @@ nbc signature powered by love.
  *
  * The Minimax algorithm is a widely used decision rule in two-player games due to its ability to minimize the possible loss for a worst-case scenario. By exploring all possible moves and their outcomes, the algorithm ensures that the player makes the best move based on the assumption that the opponent will also play optimally.
  *
+ * If you want to get more info on Minimax, Alpha-Beta algorythm and Monte Carlo Tree Search (another interesting algorithm that we don't use), you can check [this article](https://philippmuens.com/minimax-and-mcts).
  */
