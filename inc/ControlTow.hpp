@@ -47,16 +47,45 @@ const std::unordered_map<
     {DEBUG, "DEBUG"},
 };
 
+/// @class ControlTow
+/// @brief Handles various commands for the Gomoku game.
+///
+/// This class provides methods to handle
+/// different commands such as "ABOUT", "START",
+/// "END", "INFO", "TURN", "BOARD", and "BEGIN".
+/// It also provides a mechanism to log messages
+/// and check if the game should stop.
 class ControlTow {
 public:
+    /// @brief Constructor for ControlTow class.
     ControlTow();
 
+    /// @brief Handles the "ABOUT" command.
+    /// @param cmd The command string.
     void handle_about([[maybe_unused]] std::string &cmd);
+
+    /// @brief Handles the "START" command.
+    /// @param cmd The command string.
     void handle_start(std::string &cmd);
+
+    /// @brief Handles the "END" command.
+    /// @param cmd The command string.
     void handle_end([[maybe_unused]] std::string &cmd);
+
+    /// @brief Handles the "INFO" command.
+    /// @param cmd The command string.
     void handle_info(std::string &cmd);
+
+    /// @brief Handles the "TURN" command.
+    /// @param cmd The command string.
     void handle_turn(std::string &cmd);
+
+    /// @brief Handles the "BOARD" command.
+    /// @param cmd The command string.
     void handle_board(std::string &cmd);
+
+    /// @brief Handles the "BEGIN" command.
+    /// @param cmd The command string.
     void handle_begin(std::string &cmd);
 
     const std::array<CommandMapping, 7> COMMAND_MAPPINGS{{
@@ -104,6 +133,9 @@ public:
         },
     }};
 
+    /// @brief Handles a given command
+    /// by matching it with the command mappings.
+    /// @param cmd The command string.
     auto handle_cmd(std::string &cmd) -> void
     {
         for (const auto &i : COMMAND_MAPPINGS) {
@@ -115,13 +147,21 @@ public:
         this->send_log(UNKNOWN, "command is not implemented");
     }
 
+    /// @brief Extracts parameters from a command string.
+    /// @param cmd The command string.
+    /// @return A vector of command parameters.
     std::vector<std::string> getCmdParams(std::string &cmd);
 
+    /// @brief Logs a message with a specified log type.
+    /// @param t The log type.
+    /// @param msg The message to log.
     auto send_log(log_type t, const std::string &msg) -> void
     {
         std::cout << LOG_TYPE_MAPPINGS.at(t) << " " << msg << std::endl;
     }
 
+    /// @brief Checks if the game should stop.
+    /// @return True if the game should stop, false otherwise.
     auto get_should_stop() -> bool
     {
         return (this->SHOULD_STOP);
